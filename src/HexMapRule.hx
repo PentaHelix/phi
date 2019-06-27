@@ -2,14 +2,22 @@ package;
 
 import phi.Rule;
 
-class HexMapRule implements Rule {
-  var tiles:Aspect<HexPos, HexTile>;
+typedef Tiles = {
+  transform: HexTransform
+}
 
-  public function init () {
+class HexMapRule implements Rule<Tiles> {
+  public function new () {
 
   }
 
-  public function tick () {
+  public function init () {
+    for(e in entities) {
+      
+    }
+  }
 
+  public function tick () {
+    
   }
 }

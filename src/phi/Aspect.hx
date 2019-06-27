@@ -1,5 +1,0 @@
-package phi;
-
-class Aspect {
-  
-}
