@@ -1,0 +1,14 @@
+{
+  "name": "phi",
+  "url" : "",
+  "license": "MIT",
+  "tags": ["entity", "component", "ecs", "framework", "heaps"],
+  "description": "Data-driven entity-component system for heaps.",
+  "version": "0.0.1",
+  "classPath": "src/",
+  "releasenote": "Alpha release.",
+  "contributors": ["Jakob"],
+  "dependencies": {
+    "heaps": "1.5.0"
+  }
+}

@@ -1,0 +1,10 @@
+-D windowSize=1366x768
+-D debug
+
+-lib heaps
+-lib hlsdl
+
+-cp src
+-main Main
+
+-hl bin/theta.hl
