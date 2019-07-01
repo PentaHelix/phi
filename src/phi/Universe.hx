@@ -4,6 +4,8 @@ class Universe {
   private var passes:Array<Pass> = [];
   private var entities:Array<Entity> = [];
 
+  public function new () {}
+
   public function addPass (p: Pass) {
     passes.push(p);
   }

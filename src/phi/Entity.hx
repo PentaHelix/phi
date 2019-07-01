@@ -1,27 +1,27 @@
 package phi;
 
+import haxe.CallStack;
 import haxe.ds.IntMap;
 
-class Entity{
-  private static var entityCount = 0;
-
-  public var id(default, null):Int;
-
-  private var universe: Universe;
-
-  private var traits: IntMap<Trait>;
-
-  public function new(t: Array<Trait>, ?u: Universe) {
-    id = entityCount++;
-    if (u == null) u = Game.universe;
-    universe = u;
+abstract Entity(Int) to Int from Int {
+  private static var entity_count = 0;
+  public function new (t: Array<Trait>, u: Universe) {
+    this = entity_count++;
+    Game.registerEntity(this, u);
+    u.addEntity(this);
     addTraits(t);
   }
 
-  public function addTraits(t: Array<Trait>) {
-    for(trait in traits) {
-      traits.set(trait.hashCode(), trait);
+  public function addTraits (traits: Array<Trait>) {
+    for (trait in traits) {
+      Game.entities.get(this).traits.set(trait.hashCode());
+      Game.entities.get(this).data.set(trait.hashCode(), trait);
     }
-    universe.match(this);
+
+    Game.match(this);
+  }
+
+  public function getTrait (id: Int) {
+    return Game.entities.get(this).data.get(id);
   }
 }

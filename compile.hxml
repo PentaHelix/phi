@@ -5,6 +5,6 @@
 -lib hlsdl
 
 -cp src
--main Main
+-hl bin/phi.hl
 
--hl bin/theta.hl
+-main Main

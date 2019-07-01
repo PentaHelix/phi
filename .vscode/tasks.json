@@ -4,6 +4,7 @@
     {
       "type": "hxml",
       "file": "compile.hxml",
+      "request": "launch",
       "problemMatcher": [
         "$haxe-absolute",
         "$haxe",
