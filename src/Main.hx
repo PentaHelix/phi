@@ -15,8 +15,6 @@ class Main extends Game {
   }
 
   override public function init () {
-    hxd.Stage.getInstance().addEventTarget(onEvent);
-
     s2d.zoom = 8;
 
     universe = new Universe();
@@ -25,13 +23,8 @@ class Main extends Game {
     universe.addPass(pass);
     pass.add(new HexMapRule(s2d));
 
-    (new HexPos(0, 0, 0)).neighbors(true).map(p -> {
-      var transform = new HexTransform();
-      transform.pos = p;
-      new Entity([
-        transform,
-        new HexTile(),
-      ], universe);
+    (new HexPos(0, -3, 3)).neighbors(true).map(p -> {
+      trace('$p -> ${HexPos.deserialize(p.serialize())}');
     });
 
     Game.warpTo(universe);

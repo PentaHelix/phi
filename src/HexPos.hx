@@ -15,6 +15,10 @@ abstract HexPos(Vector) from Vector to Vector {
     new HexPos(1, 0, -1),
   ];
 
+  public var x(get, set): Int;
+  public var y(get, set): Int;
+  public var z(get, set): Int;
+
   public function new (x: Int, y: Int, z: Int) {
     this = new Vector(x, y, z);
   }
@@ -35,7 +39,6 @@ abstract HexPos(Vector) from Vector to Vector {
   public static function fromPixel (pixel: Vector): HexPos {
     var q = pixel.x / 16 - pixel.y / 26;
     var r = pixel.y / 13;
-    // trace('$q, $r');
     return Hex.round(q, -q-r, r);
   }
 
@@ -50,6 +53,11 @@ abstract HexPos(Vector) from Vector to Vector {
     return new HexPos(cast(this.x - rhs.x), cast(this.y - rhs.y), cast(this.z - rhs.z));
   }
 
+  @:op(A * B)
+  public function scale (rhs: Int) {
+    return new HexPos(get_x() * rhs, get_y() * rhs, get_z() * rhs);
+  }
+
   // serialization
   public function serialize (): Int {
     var r = Hex.distance(this, ZERO);
@@ -59,7 +67,6 @@ abstract HexPos(Vector) from Vector to Vector {
     var angle = Math.atan2(pixel.y, pixel.x) / (2*Math.PI);
     if (angle < 0) angle += 1;
     var offset: Int = Math.round(angle * r * 6);
-    // trace('${this}: ${base} + ${offset}');
     return base + offset;
   }
 
@@ -72,7 +79,47 @@ abstract HexPos(Vector) from Vector to Vector {
       d += 6;
     }
 
-    // trace('${base+1} + ${s-1}');
-    return HexPos.ZERO;
+    var r: Int = cast d/6;
+    base++;
+    var offset: Int = s-1;
+
+    var posBase = new HexPos(r, -r, 0);
+
+    var dir = 0;
+    while (offset > r) {
+      posBase = new HexPos(-posBase.z, -posBase.x, -posBase.y);
+      offset -= r;
+      dir++;
+    }
+
+    posBase += offsets[(dir + 2) % 6] * offset;
+
+    return posBase;
+  }
+
+  // getters / setters
+
+  public function get_x (): Int {
+    return cast this.x;
+  }
+
+  public function set_x (x: Float) {
+    return cast this.x = x;
+  }
+
+  public function get_y (): Int {
+    return cast this.y;
+  }
+
+  public function set_y (y: Float) {
+    return cast this.y = y;
+  }
+
+  public function get_z (): Int {
+    return cast this.z;
+  }
+
+  public function set_z (z: Float) {
+    return cast this.z = z;
   }
 }
