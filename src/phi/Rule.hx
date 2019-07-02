@@ -10,6 +10,8 @@ interface Rule<T:{}> {
   public function match (e: Entity): Void;
   public function onMatched (e: T): Void;
   public function onUnmatched (e: T): Void;
+
+  public function removeEntity (e: Entity): Void;
 }
 
 #else
@@ -48,6 +50,7 @@ class Rule {
     // add match function
     fields.push(mask(ct));
     fields.push(matcher(ct));
+    fields.push(remover());
     return fields;
   }
 
@@ -145,6 +148,38 @@ class Rule {
     }
   }
 
+  private static function remover (): Field {
+    return {
+      name: 'removeEntity',
+      pos: Context.currentPos(),
+      access: [APublic],
+      kind: FFun({
+        args: [{
+          name: 'entity',
+          meta: null,
+          opt: false,
+          value: null,
+          type: TPath({
+            name: 'Entity',
+            pack: ['phi'],
+            params: null,
+            sub: null
+          })
+        }],
+        ret: TPath({
+          name: 'Void',
+          pack: [],
+          params: null,
+          sub: null
+        }),
+        expr: macro {
+          onUnmatched(entities.get(entity));
+          entities.remove(entity);
+        },
+        params: null
+      })
+    }
+  }
   private static function getTypeId (field: Field): Int {
     return switch(field.kind) {
       case FVar(t, e): getTypeIdOfType(t);

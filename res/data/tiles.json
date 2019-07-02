@@ -1,0 +1,17 @@
+[
+  {
+    "id": 0,
+    "name": "floor_planks",
+    "variants": []
+  },
+  {
+    "id": 1,
+    "name": "floor_rocks",
+    "variants": []
+  },
+  {
+    "id": 2,
+    "name": "wall_bricks",
+    "variants": []
+  }
+]

@@ -36,6 +36,11 @@ class Game extends hxd.App {
     });
   }
 
+  public static function removeEntity (e: Entity) {
+    Game.entities.get(e).universe.removeEntity(e);
+    Game.entities.remove(e);
+  }
+
   public static function match (e: Entity) {
     Game.entities.get(e).universe.match(e);
   }

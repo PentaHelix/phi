@@ -19,4 +19,10 @@ class Pass {
       rule.match(e);
     }
   }
+
+  public function removeEntity (e: Entity) {
+    for (rule in rules) {
+      rule.removeEntity(e);
+    }
+  }
 }

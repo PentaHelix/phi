@@ -14,6 +14,13 @@ class Universe {
     entities.push(e);
   }
 
+  public function removeEntity (e: Entity) {
+    entities.remove(e);
+    for (pass in passes) {
+      pass.removeEntity(e);
+    }
+  }
+
   public function tick () {
     for (pass in passes) {
       pass.tick();

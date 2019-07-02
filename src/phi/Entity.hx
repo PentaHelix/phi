@@ -24,4 +24,8 @@ abstract Entity(Int) to Int from Int {
   public function getTrait (id: Int) {
     return Game.entities.get(this).data.get(id);
   }
+
+  public inline function destroy () {
+    Game.removeEntity(this);
+  }
 }
