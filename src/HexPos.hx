@@ -71,6 +71,7 @@ abstract HexPos(Vector) from Vector to Vector {
   }
 
   public static function deserialize (s: Int): HexPos {
+    if (s == 0) return HexPos.ZERO;
     var d: Int = 6;
     var base: Int = 0;
     while (d < s) {

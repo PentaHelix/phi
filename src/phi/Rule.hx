@@ -3,6 +3,8 @@ package phi;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 
+using Lambda;
+
 #if !macro
 @:autoBuild(phi.Rule.build())
 interface Rule<T:{}> {
@@ -65,6 +67,7 @@ class Rule {
     }
 
     for (field in fields) {
+      if (!field.meta.exists(t -> t.name == ':trait')) continue;
       switch (field.kind) {
         case FVar(fieldType):
         objFields.push({
@@ -128,7 +131,7 @@ class Rule {
     var fields: Array<Field> = [];
     switch (ct) {
       case TAnonymous(f):
-        fields = f;
+        fields = f.filter(f -> f.meta.exists(t -> t.name == ':trait'));
       default: 
     }
 
@@ -142,7 +145,7 @@ class Rule {
           pack: ['phi']
         }),
         macro {
-          new phi.Traits($v{fields.map(field ->  getTypeId(field))});
+          new phi.Traits($v{fields.map(field -> getTypeId(field))});
         }
       )
     }
@@ -173,8 +176,8 @@ class Rule {
           sub: null
         }),
         expr: macro {
-          onUnmatched(entities.get(entity));
           entities.remove(entity);
+          onUnmatched(entities.get(entity));
         },
         params: null
       })

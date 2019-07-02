@@ -8,8 +8,8 @@ import phi.Rule;
 import phi.Entity;
 
 typedef Tiles = {
-  transform: HexTransform,
-  tile: HexTile
+  @:trait var transform: HexTransform;
+  @:trait var tile: HexTile;
 }
 
 class HexMapRule implements Rule<Tiles> {
@@ -29,16 +29,21 @@ class HexMapRule implements Rule<Tiles> {
 		];
   }
 
-  public function tick () {
-    
-  }
+  public function tick () {}
 
-  public function onMatched (e: Tiles) {
-    var pos = e.transform.pos.toPixel();
-    group.add(pos.x, pos.y, tiles[0]);
+  public function onMatched (t: Tiles) {
+    makeTile(t);
   }
 
   public function onUnmatched (e: Tiles) {
-    trace('unmatched ${e}');
+    group.clear();
+    for (t in entities) {
+      makeTile(t);
+    }
+  }
+
+  private function makeTile (t:Tiles) {
+    var pos = t.transform.pos.toPixel();
+    group.add(pos.x, pos.y, tiles[0]);
   }
 }
