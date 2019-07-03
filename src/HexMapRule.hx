@@ -23,8 +23,8 @@ class HexMapRule implements Rule<Tiles> {
     group = new TileGroup(tileMap, s2d);
 
     tiles = [
+			 for(x in 0 ... C.tiles.length)
 			 for(y in 0 ... 1)
-			 for(x in 0 ... 4)
 			 tileMap.sub(x * 16, y * 16, 16, 16).center()
 		];
   }
@@ -44,6 +44,6 @@ class HexMapRule implements Rule<Tiles> {
 
   private function makeTile (t:Tiles) {
     var pos = t.transform.pos.toPixel();
-    group.add(pos.x, pos.y, tiles[0]);
+    group.add(pos.x, pos.y, tiles[t.tile.tileId]);
   }
 }

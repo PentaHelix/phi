@@ -58,6 +58,11 @@ abstract HexPos(Vector) from Vector to Vector {
     return new HexPos(get_x() * rhs, get_y() * rhs, get_z() * rhs);
   }
 
+  @:op(A == B)
+  public function equals (rhs: HexPos) {
+    return get_x() == rhs.x && get_y() == rhs.y && get_z() == rhs.z;
+  }
+
   // serialization
   public function serialize (): Int {
     var r = Hex.distance(this, ZERO);

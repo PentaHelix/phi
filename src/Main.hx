@@ -17,12 +17,14 @@ class Main extends Game {
 
   public static function main() {
     hxd.Res.initEmbed();
+    C.init();
     new Main();
   }
 
   override public function init () {
-    s2d.zoom = 8;
-
+    s2d.zoom = 2;
+    s2d.x = 85 * 8/s2d.zoom;
+    s2d.y = 45 * 8/s2d.zoom;
 
     universe = new Universe();
     var pass = new phi.Pass();
@@ -31,8 +33,16 @@ class Main extends Game {
     pass.add(new HexMapRule(s2d));
 
     Game.warpTo(universe);
-    s2d.x = 85;
-    s2d.y = 45;
+
+    var map = new HexMap(14);
+    
+    for (s in HexPos.offsets.concat([HexPos.ZERO])) {
+      var room = gen.Dungeon.room().map(p -> p + s*8);
+      map.fill(room, 1);
+      map.set(room.outline(), 2);
+    }
+
+    map.createTiles(universe);
   }
 
   var hexes: Array<HexPos> = [HexPos.ZERO];
@@ -40,19 +50,6 @@ class Main extends Game {
   override public function tick () {
     super.tick();
   
-    if (Key.isPressed(Key.SPACE)) {
-      for (e in entities) e.destroy();
-      entities = [];
-      
-
-      for (hex in gen.Dungeon.room()) {
-        var transform = new HexTransform();
-        transform.pos = hex;
-        entities.push(new Entity([
-          transform,
-          new HexTile()
-        ], universe));
-      }
-    }
+    if (Key.isPressed(Key.SPACE)) { }
   }
 }

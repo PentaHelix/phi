@@ -4,8 +4,8 @@ using Hex;
 using Utils;
 
 class Dungeon {
-  public static inline var ROOM_MIN_SIZE = 10;
-  public static inline var ROOM_MAX_SIZE = 25;
+  public static inline var ROOM_MIN_SIZE = 8;
+  public static inline var ROOM_MAX_SIZE = 18;
 
   public static function room (): Array<HexPos> {
     var hexes = [HexPos.ZERO];
