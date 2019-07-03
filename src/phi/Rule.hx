@@ -113,13 +113,14 @@ class Rule {
         expr: macro {
           if (phi.Game.entities.get(entity).traits.match(this.mask)) {
             if (!this.entities.exists(entity)) {
-              this.entities.set(entity, ${objDecl});
-              this.onMatched(${objDecl});
+              var e = ${objDecl};
+              this.entities.set(entity, e);
+              this.onMatched(e);
             }
           } else {
             if (this.entities.exists(entity)) {
+              this.onUnmatched(this.entities.get(entity));
               this.entities.remove(entity);
-              this.onUnmatched(${objDecl});
             }
           }
         }

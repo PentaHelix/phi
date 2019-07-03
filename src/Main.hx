@@ -31,6 +31,7 @@ class Main extends Game {
 
     universe.addPass(pass);
     pass.add(new HexMapRule(s2d));
+    pass.add(new HexActorRule(s2d));
 
     Game.warpTo(universe);
 
@@ -42,6 +43,10 @@ class Main extends Game {
       map.set(room.outline(), 2);
     }
 
+    new Entity([
+      new HexTransform(HexPos.ZERO),
+      new HexActor(0)
+    ], universe);
     map.createTiles(universe);
   }
 
