@@ -12,17 +12,18 @@ typedef Actor = {
   @:trait var transform: HexTransform;
   @:trait var actor: HexActor;
   var ?sprite: Bitmap;
+  var ?facing: Int;
 }
 
 class HexActorRule implements Rule<Actor> {
-  var actors: Array<Tile>;
+  var actors: Array<Array<Tile>>;
   var s2d: Scene;
   public function new (s: Scene) {
     s2d = s;
     actors = Res.load("actors.png")
       .toTile()
-      .gridFlatten(16)
-      .map(s -> s.center());
+      .grid(16)
+      .map(arr -> arr.map(s -> s.center()));
   }
 
   public function tick () {
@@ -30,27 +31,30 @@ class HexActorRule implements Rule<Actor> {
       move(a);
       var pos = a.transform.pos.toPixel();
       a.sprite.setPosition(pos.x, pos.y);
+      a.sprite.tile = actors[a.actor.actorId][a.facing];
     }
   }
 
+  private static var keyMap = [
+    Key.F, // 0
+    Key.D, // 1
+    Key.S, // 2
+    Key.A, // 3
+    Key.W, // 4
+    Key.E, // 5
+  ];
+
   private function move (a: Actor) {
-    if (Key.isPressed(Key.F)) {
-      a.transform.pos += HexPos.offsets[0];
-    } else if (Key.isPressed(Key.D)) {
-      a.transform.pos += HexPos.offsets[1];
-    } else if (Key.isPressed(Key.S)) {
-      a.transform.pos += HexPos.offsets[2];
-    } else if (Key.isPressed(Key.A)) {
-      a.transform.pos += HexPos.offsets[3];
-    } else if (Key.isPressed(Key.W)) {
-      a.transform.pos += HexPos.offsets[4];
-    } else if (Key.isPressed(Key.E)) {
-      a.transform.pos += HexPos.offsets[5];
+    for (k in 0...6) {
+      if (Key.isPressed(keyMap[k])) {
+        a.transform.pos += HexPos.offsets[k];
+        a.facing = k;
+      }
     }
   }
 
   public function onMatched (a: Actor) {
-    a.sprite = new Bitmap(actors[0], s2d);
+    a.sprite = new Bitmap(actors[a.actor.actorId][0], s2d);
   }
 
   public function onUnmatched (a: Actor) {

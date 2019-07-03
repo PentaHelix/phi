@@ -22,7 +22,7 @@ class Main extends Game {
   }
 
   override public function init () {
-    s2d.zoom = 2;
+    s2d.zoom = 8;
     s2d.x = 85 * 8/s2d.zoom;
     s2d.y = 45 * 8/s2d.zoom;
 
