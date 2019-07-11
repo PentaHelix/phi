@@ -1,4 +1,4 @@
-package;
+package rules;
 
 import phi.Game;
 import h2d.Scene;
@@ -8,6 +8,9 @@ import h2d.Tile;
 import hxd.Key;
 import phi.Entity;
 import phi.Rule;
+
+import traits.HexTransform;
+import traits.HexActor;
 
 typedef Actor = {
   @:trait var transform: HexTransform;
@@ -51,11 +54,18 @@ class HexActorRule implements Rule<Actor> {
       move(a);
       var pos = a.transform.pos.toPixel();
       a.sprite.x += (pos.x - a.sprite.x) * 0.3;
-      a.sprite.y += (pos.y - a.sprite.y) * 0.3;
-      // a.sprite.setPosition(pos.x, pos.y);
-      a.sprite.tile = actors[a.actor.actorId][a.facing];
+      a.sprite.y += (pos.y - 5 - a.sprite.y) * 0.3;
+      // a.sprite.setPosition(pos.x, pos.y - 4);
+      a.sprite.tile = actors[a.actor.actorId][spriteFacing[a.facing]];
     }
   }
+
+  private static var spriteFacing = [
+    0,
+    1,1,
+    2,
+    3,3
+  ];
 
   private static var keyMap = [
     Key.F, // 0

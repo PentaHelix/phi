@@ -1,6 +1,6 @@
 package controllers;
 
-class Basic implements Controller {
+class Hostile implements Controller {
   public function getAction () {
     return null;
   }

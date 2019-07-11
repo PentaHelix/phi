@@ -1,4 +1,4 @@
-package;
+package rules;
 
 import h2d.Tile;
 import hxd.Res;
@@ -6,6 +6,9 @@ import h2d.TileGroup;
 import h2d.Scene;
 import phi.Rule;
 import phi.Entity;
+
+import traits.HexTransform;
+import traits.HexTile;
 
 typedef Tiles = {
   @:trait var transform: HexTransform;
@@ -23,7 +26,7 @@ class HexMapRule implements Rule<Tiles> {
     group = new TileGroup(tileMap, s2d);
 
     tiles = [
-			 for(x in 0 ... C.tiles.length)
+			 for(x in 0 ... C.TILE_COUNT)
 			 for(y in 0 ... 1)
 			 tileMap.sub(x * 16, y * 16, 16, 16).center()
 		];

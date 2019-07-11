@@ -1,4 +1,4 @@
-package;
+package traits;
 
 import phi.Trait;
 import controllers.Controller;
