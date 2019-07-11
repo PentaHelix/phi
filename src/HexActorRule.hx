@@ -1,5 +1,6 @@
 package;
 
+import phi.Game;
 import h2d.Scene;
 import hxd.Res;
 import h2d.Bitmap;
@@ -18,6 +19,9 @@ typedef Actor = {
 class HexActorRule implements Rule<Actor> {
   var actors: Array<Array<Tile>>;
   var s2d: Scene;
+  var current: Int = 0;
+  var order: List<Entity> = new List<Entity>();
+
   public function new (s: Scene) {
     s2d = s;
     actors = Res.load("actors.png")
@@ -27,10 +31,28 @@ class HexActorRule implements Rule<Actor> {
   }
 
   public function tick () {
+    // current %= entities.
+    var actor = entities.get(current).actor;
+    
+    if (actor.energy + actor.speed >= 100) {
+      actor.energy -= 100;
+
+      var action = actor.controller.getAction();
+      if (action == null) return;
+
+      var success = action.perform();
+      if (!success) return;
+      
+      actor.energy += actor.speed - 100;
+      current++;
+    }
+
     for (a in entities) {
       move(a);
       var pos = a.transform.pos.toPixel();
-      a.sprite.setPosition(pos.x, pos.y);
+      a.sprite.x += (pos.x - a.sprite.x) * 0.3;
+      a.sprite.y += (pos.y - a.sprite.y) * 0.3;
+      // a.sprite.setPosition(pos.x, pos.y);
       a.sprite.tile = actors[a.actor.actorId][a.facing];
     }
   }
@@ -47,17 +69,18 @@ class HexActorRule implements Rule<Actor> {
   private function move (a: Actor) {
     for (k in 0...6) {
       if (Key.isPressed(keyMap[k])) {
-        a.transform.pos += HexPos.offsets[k];
+        a.transform.pos += HexVec.offsets[k];
         a.facing = k;
       }
     }
   }
 
-  public function onMatched (a: Actor) {
+  public function onMatched (a: Actor, e: Entity) {
     a.sprite = new Bitmap(actors[a.actor.actorId][0], s2d);
+    order.add(e);
   }
 
-  public function onUnmatched (a: Actor) {
-
+  public function onUnmatched (a: Actor, e: Entity) {
+    order.add(e);
   }
 }

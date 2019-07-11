@@ -31,11 +31,11 @@ class HexMapRule implements Rule<Tiles> {
 
   public function tick () {}
 
-  public function onMatched (t: Tiles) {
+  public function onMatched (t: Tiles, e: Entity) {
     makeTile(t);
   }
 
-  public function onUnmatched (e: Tiles) {
+  public function onUnmatched (e: Tiles, e: Entity) {
     group.clear();
     for (t in entities) {
       makeTile(t);

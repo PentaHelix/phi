@@ -1,12 +1,17 @@
 package;
 
 import phi.Trait;
+import controllers.Controller;
 
 class HexActor implements Trait {
-  public var isControlled: Bool = false;
   public var actorId: Int = 0;
+  public var speed: Int = 50;
+  public var energy: Int = 0;
 
-  public function new (id: Int) {
-    actorId = id;
+  public var controller: Controller;
+
+  public function new (actorId: Int, controller: Controller) {
+    this.actorId = actorId;
+    this.controller = controller;
   }
 }

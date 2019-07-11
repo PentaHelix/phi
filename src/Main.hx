@@ -37,24 +37,22 @@ class Main extends Game {
 
     var map = new HexMap(14);
     
-    for (s in HexPos.offsets.concat([HexPos.ZERO])) {
+    for (s in HexVec.offsets.concat([HexVec.ZERO])) {
       var room = gen.Dungeon.room().map(p -> p + s*8);
       map.fill(room, 1);
       map.set(room.outline(), 2);
     }
 
     new Entity([
-      new HexTransform(HexPos.ZERO),
-      new HexActor(0)
+      new HexTransform(HexVec.ZERO),
+      new HexActor(0, null)
     ], universe);
     map.createTiles(universe);
   }
 
-  var hexes: Array<HexPos> = [HexPos.ZERO];
+  var hexes: Array<HexVec> = [HexVec.ZERO];
 
   override public function tick () {
     super.tick();
-  
-    if (Key.isPressed(Key.SPACE)) { }
   }
 }

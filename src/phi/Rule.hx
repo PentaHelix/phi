@@ -10,8 +10,8 @@ using Lambda;
 interface Rule<T:{}> {
   public function tick (): Void;
   public function match (e: Entity): Void;
-  public function onMatched (e: T): Void;
-  public function onUnmatched (e: T): Void;
+  public function onMatched (t: T, e: Entity): Void;
+  public function onUnmatched (t: T, e: Entity): Void;
 
   public function removeEntity (e: Entity): Void;
 }
@@ -115,11 +115,11 @@ class Rule {
             if (!this.entities.exists(entity)) {
               var e = ${objDecl};
               this.entities.set(entity, e);
-              this.onMatched(e);
+              this.onMatched(e, entity);
             }
           } else {
             if (this.entities.exists(entity)) {
-              this.onUnmatched(this.entities.get(entity));
+              this.onUnmatched(this.entities.get(entity), entity);
               this.entities.remove(entity);
             }
           }
@@ -178,7 +178,7 @@ class Rule {
         }),
         expr: macro {
           entities.remove(entity);
-          onUnmatched(entities.get(entity));
+          onUnmatched(entities.get(entity), entity);
         },
         params: null
       })

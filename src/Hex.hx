@@ -6,16 +6,16 @@ using Lambda;
 
 class Hex {
   // geometry
-  public static function distance (from: HexPos, to:HexPos): Int {
+  public static function distance (from: HexVec, to:HexVec): Int {
     return cast Math.max(Math.max((from.x - to.x).abs(), (from.y - to.y).abs()), (from.z - to.z).abs());
   }
 
-  public static function path (from: HexPos, to:HexPos, map: HexMap): Array<HexPos> {
+  public static function path (from: HexVec, to:HexVec, map: HexMap): Array<HexVec> {
     // TODO
     return [];
   }
 
-  public static function outline (src: Array<HexPos>) {
+  public static function outline (src: Array<HexVec>) {
     var outline: IntMap<Bool> = new IntMap<Bool>();
     for (pos in src) {
       pos.neighbors().map(p -> p.serialize()).foreach(s -> {
@@ -30,7 +30,7 @@ class Hex {
 
     var result = [];
     for (k in outline.keys()) {
-      result.push(HexPos.deserialize(k));
+      result.push(HexVec.deserialize(k));
     }
 
     return result;
@@ -50,6 +50,6 @@ class Hex {
     else if (y_diff > z_diff) ry = -rx-rz;
     else rz = -rx-ry;
 
-    return new HexPos(rx, ry, rz);
+    return new HexVec(rx, ry, rz);
   }
 }
