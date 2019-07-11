@@ -14,8 +14,8 @@ abstract Entity(Int) to Int from Int {
 
   public function addTraits (traits: Array<Trait>) {
     for (trait in traits) {
-      Game.entities.get(this).traits.set(trait.hashCode());
-      Game.entities.get(this).data.set(trait.hashCode(), trait);
+      phi.Game.entities.get(this).traits.set(trait.hashCode());
+      phi.Game.entities.get(this).data.set(trait.hashCode(), trait);
     }
 
     Game.match(this);
