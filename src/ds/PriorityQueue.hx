@@ -2,19 +2,19 @@ package ds;
 
 import haxe.ds.Vector;
 
-@:generic
+using Lambda;
+
 typedef Node<T> = {
   var data: T;
-  var priority: Int;
+  var priority: Float;
   var position: Int;
 }
 
-@:generic
 class PriorityQueue<T> {
 	public var capacity(default, null):Int;
 
 	var mData: Vector<Node<T>>;
-	var mInitialCapacity: Int = 1;
+	var mInitialCapacity: Int = 10;
 	var mSize: Int = 0;
 	
 	public function new() {
@@ -51,7 +51,7 @@ class PriorityQueue<T> {
 	/**
 		Enqueues `val`.
 	**/
-	public function enqueue(val:T, pri: Int): Void {
+	public function enqueue(val:T, pri: Float): Void {
 		if (size == capacity) grow();
 		mData[++mSize] = {
       data: val,
@@ -72,21 +72,55 @@ class PriorityQueue<T> {
 		mSize--;
 		return x.data;
 	}
+
+	public function contains(val:T):Bool {
+		for (n in mData) {
+			if (n == null) continue;
+			if (n.data == val) return true;
+		}
+		return false;
+	}
+
+	public function remove(val:T):Bool {
+		if (isEmpty()) return false;
+		else {
+			var node: Node<T> = null;
+			for (n in mData) {
+				if (n == null) continue;
+				if (n.data == val) {
+					node = n;
+					break;
+				}
+			}
+
+			if (node == null) return false;
+
+			if (node.position == 1)
+				dequeue();
+			else
+			{
+				var p = node.position, d = mData;
+				d.set(p, d.get(size));
+				downheap(p);
+				upheap(p);
+				mSize--;
+			}
+			return true;
+		}
+	}
 	
 	/**
 		The total number of elements.
 	**/
 	public var size(get, never):Int;
-	inline function get_size():Int
-	{
+	inline function get_size():Int {
 		return mSize;
 	}
 	
 	/**
 		Returns true only if `this.size` is 0.
 	**/
-	public inline function isEmpty():Bool
-	{
+	public inline function isEmpty():Bool {
 		return size == 0;
 	}
 	
@@ -136,14 +170,6 @@ class PriorityQueue<T> {
 		
 		d[index] = t;
 		t.position = index;
-	}
-	
-	function repair() {
-		var i = size >> 1;
-		while (i >= 1) {
-			heapify(i, size);
-			i--;
-		}
 	}
 	
 	function heapify(p:Int, s:Int) {

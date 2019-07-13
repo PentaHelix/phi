@@ -1,5 +1,7 @@
 package;
 
+import haxe.ds.IntMap;
+import ds.PriorityQueue;
 import traits.HexActor;
 import phi.Universe;
 import phi.Entity;
@@ -8,31 +10,38 @@ import haxe.ds.Vector;
 import traits.HexTile;
 import traits.HexTransform;
 
+using Hex;
+
 class HexMap {
   public var radius: Int;
-  public var data: Vector<MapData>;
+  public var data: IntMap<MapData>;
 
   public function new (radius: Int) {
     this.radius = radius;
-    this.data = new Vector<MapData>(radius * (radius + 1) * 3 + 1);
-    for (i in 0...data.length) {
-      data[i] = {
+    this.data = new IntMap<MapData>();
+  }
+
+  public function at(v: HexVec) {
+    if (data.get(v.serialize()) == null) {
+      data.set(v.serialize(), {
         items: [],
         tile: null,
         actor: null
-      }
+      });
     }
+
+    return data.get(v.serialize());
   }
 
   public function set (area: Array<HexVec>, name: String) {
     for (p in area) {
-      data[p.serialize()].tile = new HexTile(name);
+      at(p).tile = new HexTile(name);
     }
   }
 
   public function fill (area: Array<HexVec>, name: String) {
     for (p in area) {
-      if (data[p.serialize()].tile == null) data[p.serialize()].tile = new HexTile(name);
+      if (at(p).tile == null) at(p).tile = new HexTile(name);
     }
   }
 
@@ -41,19 +50,80 @@ class HexMap {
   }
 
   public function findPath (p1: HexVec, p2: HexVec, ?maxLen=9999) {
-    if(data[p1.serialize()].tile == null || data[p2.serialize()].tile == null) return null;
-    if(!data[p1.serialize()].tile.data.passable) return null;
+    if(at(p1).tile == null || at(p2).tile == null) return null;
+    if(!at(p1).tile.data.passable) return null;
     if(p1 == p2) return [];
 
-    
+    var explored: IntMap<PathNode> = new IntMap<PathNode>();
+    var queue:PriorityQueue<PathNode> = new PriorityQueue<PathNode>();
+    var dist = Hex.distance(p1, p2);
+
+    queue.enqueue({
+      pos: p1,
+      prev: null,
+      g: 0,
+      h: dist,
+      f: dist
+    }, dist);
+
+    var found: Bool = false;
+    var current:PathNode = null;
+    while (!queue.isEmpty() && !found) {
+      current = queue.dequeue();
+      explored.set(current.pos.serialize(), current);
+      if(at(current.pos).tile == null) continue;
+      if(!at(current.pos).tile.data.passable) continue;
+
+      if (current.pos == p2) {
+        found = true;
+        break;
+      }
+
+      for (n in current.pos.neighbors()) {
+        var gScore:Float = current.g + 1;
+        var fScore:Float = gScore + Hex.distance(n, p2);
+        var ex:PathNode = explored.get(n.serialize());
+
+        if (ex != null && fScore >= ex.f) {
+          continue;
+        } else if (!queue.contains(ex) || fScore < ex.f) {
+          if (ex == null) {
+            ex = {
+              pos: n,
+              prev: null,
+              g: 0,
+              h: Hex.distance(n, p2),
+              f: 0,
+            }
+          }
+          ex.prev = current;
+          ex.g = gScore;
+          ex.f = fScore;
+          if (queue.contains(ex)) {
+            queue.remove(ex);
+          }
+
+          queue.enqueue(ex, ex.f);
+        }
+      }
+    }
+
+    if (!found) return null;
+    var n: PathNode = current;
+    var path = [];
+    do {
+      path.unshift(n.pos);
+    } while ((n = n.prev) != null);
+
+    return path;
   }
 
   public function createTiles (u: Universe) {
-    for (pos in 0...data.length) {
-      if (data[pos].tile == null) continue;
+    for (h => d in data) {
+      if (d.tile == null) continue;
       new Entity([
-        new HexTransform(HexVec.deserialize(pos)),
-        data[pos].tile
+        new HexTransform(HexVec.deserialize(h)),
+        d.tile
       ], u);
     }
   }
@@ -67,5 +137,8 @@ typedef MapData = {
 
 typedef PathNode = {
   var pos: HexVec;
-  var previous: PathNode;
+  var prev: PathNode;
+  var f: Float;
+  var g: Float;
+  var h: Float;
 }

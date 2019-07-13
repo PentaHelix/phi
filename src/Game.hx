@@ -1,10 +1,5 @@
 package;
 
-import ds.PriorityQueue;
-import traits.HexTile;
-import h3d.Vector;
-import hxd.Event;
-import hxd.Key;
 import phi.Entity;
 import phi.Universe;
 
@@ -26,7 +21,7 @@ class Game extends phi.Game {
   }
   
   override public function init () {
-    s2d.zoom = 8;
+    s2d.zoom = 3;
     s2d.x = 85 * 8/s2d.zoom;
     s2d.y = 45 * 8/s2d.zoom;
 
@@ -40,24 +35,37 @@ class Game extends phi.Game {
 
     phi.Game.warpTo(universe);
 
-    map = new HexMap(14);
+    map = new HexMap(18);
     
+    var doorways: Array<HexVec> = [];
+    var rooms: Array<HexVec> = [];
+
     for (s in HexVec.offsets.concat([HexVec.ZERO])) {
-      var room = gen.Dungeon.room().map(p -> p + s*8);
+      var room = gen.Dungeon.room().map(p -> p + s*11);
       map.fill(room, "floor_rocks");
+      var outline = room.outline();
+
+      rooms = rooms.concat(room).concat(outline);
+      
+      for (i in 0...4) {
+        var idx: Int = Math.floor(outline.length/4) * i;
+        doorways.push(outline[idx]);
+      }
       map.set(room.outline(), "wall_bricks");
     }
+
+
+    var maze = gen.Dungeon.maze(doorways, rooms, 18);
+
+    map.set(maze, "floor_planks");
+    map.set(doorways, "wall_bricks_doorway");
+
+    // map.set(map.findPath(HexVec.offsets[0]*11, HexVec.offsets[1]*11), "wall_bricks");
 
     new Entity([
       new HexTransform(HexVec.ZERO),
       new HexActor(1, null)
     ], universe);
-
-    var path = map.findPath(new HexVec(0,0,0), new HexVec(2, -2, 0));
-    trace(path);
-    if (path != null) {
-      map.set(path, "floor_planks");
-    }
 
     map.createTiles(universe);
   }

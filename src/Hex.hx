@@ -1,5 +1,6 @@
 package;
 
+import h3d.Vector;
 import haxe.ds.IntMap;
 using Math;
 using Lambda;
@@ -10,9 +11,9 @@ class Hex {
     return cast Math.max(Math.max((from.x - to.x).abs(), (from.y - to.y).abs()), (from.z - to.z).abs());
   }
 
-  public static function path (from: HexVec, to:HexVec, map: HexMap): Array<HexVec> {
-    // TODO
-    return [];
+  public static function angle (v1: HexVec) {
+    var v = v1.toPixel();
+    return Math.atan2(v.y, v.x);
   }
 
   public static function outline (src: Array<HexVec>) {
@@ -32,6 +33,17 @@ class Hex {
     for (k in outline.keys()) {
       result.push(HexVec.deserialize(k));
     }
+
+
+    var sum: Vector = result.fold((v, c) -> {
+      return v + c;
+    }, HexVec.ZERO);
+
+    sum.scale3(1 / result.length);
+
+    result.sort((v1, v2) -> {
+      return angle(v1 - sum) < angle(v2 - sum) ? -1 : 1; 
+    });
 
     return result;
   }
