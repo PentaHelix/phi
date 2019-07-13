@@ -59,51 +59,61 @@ abstract HexVec(Vector) from Vector to Vector {
   }
 
   @:op(A == B)
-  public function equals (rhs: HexVec) {
-    return get_x() == rhs.x && get_y() == rhs.y && get_z() == rhs.z;
+  public inline function equals (rhs: HexVec) {
+    return get_x() == rhs.get_x() && get_y() == rhs.get_y() && get_z() == rhs.get_z();
   }
 
-  // serialization
+  @:op(A != B)
+  public inline function notEquals (rhs: HexVec) {
+    return !equals(rhs);
+  }
+
+  private static inline function toNatural (n: Int): Int {
+    if (n < 0) {
+      return -n*2+1;
+    } else {
+      return n * 2;
+    }
+  }
+
+  private static inline function fromNatural (n: Int): Int {
+    if (n & 1 == 1) {
+      return cast -(n - 1)/2;
+    } else {
+      return cast n / 2;
+    }
+  }
+
   public function serialize (): Int {
-    var r = Hex.distance(this, ZERO);
-    // r * (r - 1) / 2 * 6 + 1
-    var base: Int = r == 0 ? 0 : Math.round(r * (r - 1) * 3) + 1;
-    var pixel: Vector = toPixel();
-    var angle = Math.atan2(pixel.y, pixel.x) / (2*Math.PI);
-    if (angle < 0) angle += 1;
-    var offset: Int = Math.round(angle * r * 6);
-    return base + offset;
+    var x = toNatural(get_x());
+    var z = toNatural(get_z());
+    var max = Math.max(x, z);
+    if (max == x) {
+      return x*x + x + z;
+    } else {
+      return z*z + x;
+    }
   }
 
   public static function deserialize (s: Int): HexVec {
-    if (s == 0) return HexVec.ZERO;
-    var d: Int = 6;
-    var base: Int = 0;
-    while (d < s) {
-      s -= d;
-      base += d;
-      d += 6;
+    var q = Math.floor(Math.sqrt(s));
+    var qs = q*q;
+    var x: Int, z: Int;
+    if (s - qs < q) {
+      x = s - qs;
+      z = q;
+    } else {
+      x = q;
+      z = s - qs - q;
     }
 
-    var r: Int = cast d/6;
-    base++;
-    var offset: Int = s-1;
+    x = fromNatural(x);
+    z = fromNatural(z);
 
-    var posBase = new HexVec(r, -r, 0);
-
-    var dir = 0;
-    while (offset > r) {
-      posBase = new HexVec(-posBase.z, -posBase.x, -posBase.y);
-      offset -= r;
-      dir++;
-    }
-
-    posBase += offsets[(dir + 2) % 6] * offset;
-
-    return posBase;
+    return new HexVec(x, -x-z, z);
   }
 
-  // getters / setters
+  //getters / setters
 
   public function get_x (): Int {
     return cast this.x;
