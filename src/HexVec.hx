@@ -68,22 +68,7 @@ abstract HexVec(Vector) from Vector to Vector {
     return !equals(rhs);
   }
 
-  private static inline function toNatural (n: Int): Int {
-    if (n < 0) {
-      return -n*2+1;
-    } else {
-      return n * 2;
-    }
-  }
-
-  private static inline function fromNatural (n: Int): Int {
-    if (n & 1 == 1) {
-      return cast -(n - 1)/2;
-    } else {
-      return cast n / 2;
-    }
-  }
-
+  @:to(Int)
   public function serialize (): Int {
     var x = toNatural(get_x());
     var z = toNatural(get_z());
@@ -95,6 +80,7 @@ abstract HexVec(Vector) from Vector to Vector {
     }
   }
 
+  @:from(Int)
   public static function deserialize (s: Int): HexVec {
     var q = Math.floor(Math.sqrt(s));
     var qs = q*q;
@@ -111,6 +97,23 @@ abstract HexVec(Vector) from Vector to Vector {
     z = fromNatural(z);
 
     return new HexVec(x, -x-z, z);
+  }
+
+  // util
+  private static inline function toNatural (n: Int): Int {
+    if (n < 0) {
+      return -n*2+1;
+    } else {
+      return n * 2;
+    }
+  }
+
+  private static inline function fromNatural (n: Int): Int {
+    if (n & 1 == 1) {
+      return cast -(n - 1)/2;
+    } else {
+      return cast n / 2;
+    }
   }
 
   //getters / setters

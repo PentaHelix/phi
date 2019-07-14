@@ -1,6 +1,6 @@
 package;
 
-import haxe.ds.IntMap;
+import ds.VecMap;
 import ds.PriorityQueue;
 import traits.HexActor;
 import phi.Universe;
@@ -14,23 +14,23 @@ using Hex;
 
 class HexMap {
   public var radius: Int;
-  public var data: IntMap<MapData>;
+  public var data: VecMap<MapData>;
 
   public function new (radius: Int) {
     this.radius = radius;
-    this.data = new IntMap<MapData>();
+    this.data = new VecMap<MapData>();
   }
 
   public function at(v: HexVec) {
-    if (data.get(v.serialize()) == null) {
-      data.set(v.serialize(), {
+    if (data[v] == null) {
+      data[v] = {
         items: [],
         tile: null,
         actor: null
-      });
+      };
     }
 
-    return data.get(v.serialize());
+    return data[v];
   }
 
   public function set (area: Array<HexVec>, name: String) {
@@ -54,7 +54,7 @@ class HexMap {
     if(!at(p1).tile.data.passable) return null;
     if(p1 == p2) return [];
 
-    var explored: IntMap<PathNode> = new IntMap<PathNode>();
+    var explored: VecMap<PathNode> = new VecMap<PathNode>();
     var queue:PriorityQueue<PathNode> = new PriorityQueue<PathNode>();
     var dist = Hex.distance(p1, p2);
 
@@ -70,7 +70,7 @@ class HexMap {
     var current:PathNode = null;
     while (!queue.isEmpty() && !found) {
       current = queue.dequeue();
-      explored.set(current.pos.serialize(), current);
+      explored[current.pos] = current;
       if(at(current.pos).tile == null) continue;
       if(!at(current.pos).tile.data.passable) continue;
 
@@ -82,7 +82,7 @@ class HexMap {
       for (n in current.pos.neighbors()) {
         var gScore:Float = current.g + 1;
         var fScore:Float = gScore + Hex.distance(n, p2);
-        var ex:PathNode = explored.get(n.serialize());
+        var ex:PathNode = explored[n];
 
         if (ex != null && fScore >= ex.f) {
           continue;

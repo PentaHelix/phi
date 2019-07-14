@@ -2,7 +2,8 @@ package gen;
 
 import HexMap.PathNode;
 import ds.PriorityQueue;
-import haxe.ds.IntMap;
+import ds.VecMap;
+
 using Hex;
 using Utils;
 using Lambda;
@@ -27,8 +28,8 @@ class Dungeon {
   }
 
   public static function maze (initialPassages: Array<HexVec>, initialWalls: Array<HexVec>, size: Int) {
-    var passages: IntMap<Bool> = new IntMap<Bool>();
-    var walls: IntMap<Bool> = new IntMap<Bool>();
+    var passages: VecMap<Bool> = new VecMap<Bool>();
+    var walls: VecMap<Bool> = new VecMap<Bool>();
     var open: Array<HexVec> = initialPassages.copy();
 
     for (p in initialPassages) {
@@ -36,35 +37,34 @@ class Dungeon {
     }
 
     for (w in initialWalls) {
-      walls.set(w.serialize(), true);
+      walls[w] = true;
     }
 
     while (open.length != 0) {
       var h = open.random();
       open.remove(h);
 
-      
-      var count = h.neighbors().count(n -> passages.get(n.serialize()));
+      var count = h.neighbors().count(n -> passages[n.serialize()]);
       if (count > 2) continue;
 
-      var last = passages.get(h.neighbors()[5].serialize());
+      var last = passages[h.neighbors()[5]];
       var shouldOpen = true;
       for (n in h.neighbors()) {
-        if (last && passages.get(n.serialize())) shouldOpen = false;
-        last =  passages.get(n.serialize());
+        if (last && passages[n]) shouldOpen = false;
+        last =  passages[n];
       }
 
       if (shouldOpen) {
-        passages.set(h.serialize(), true);
-        walls.set(h.serialize(), false);
+        passages[h] = true;
+        walls[h] = false;
       } else {
-        walls.set(h.serialize(), true);
-        passages.set(h.serialize(), false);
+        walls[h] = true;
+        passages[h] = true;
       }
 
       for (n in h.neighbors()) {
-        if (passages.get(n.serialize())) continue;
-        if (walls.get(n.serialize())) continue;
+        if (passages[n]) continue;
+        if (walls[n]) continue;
         if (Hex.distance(HexVec.ZERO, n) >= 18) continue;
 
         open.push(n);
@@ -74,14 +74,14 @@ class Dungeon {
     return passages;
   }
 
-  public static function corridor (w: Array<HexVec>, maze: IntMap<Bool>, p1: HexVec, p2: HexVec) {
-    var explored: IntMap<PathNode> = new IntMap<PathNode>();
+  public static function corridor (w: Array<HexVec>, maze: VecMap<Bool>, p1: HexVec, p2: HexVec) {
+    var explored: VecMap<PathNode> = new VecMap<PathNode>();
     var queue:PriorityQueue<PathNode> = new PriorityQueue<PathNode>();
     var dist = Hex.distance(p1, p2);
 
-    var walls: IntMap<Bool> = new IntMap<Bool>();
+    var walls: VecMap<Bool> = new VecMap<Bool>();
     for (wall in w) {
-      walls.set(wall.serialize(), true);
+      walls[wall] = true;
     }
 
     queue.enqueue({
@@ -94,9 +94,10 @@ class Dungeon {
 
     var found: Bool = false;
     var current:PathNode = null;
+
     while (!queue.isEmpty() && !found) {
       current = queue.dequeue();
-      explored.set(current.pos.serialize(), current);
+      explored[current.pos] = current;
 
       if (current.pos == p2) {
         found = true;
@@ -104,13 +105,14 @@ class Dungeon {
       }
 
       for (n in current.pos.neighbors()) {
-        if(walls.get(n.serialize()) == true && n != p2) continue;
+        if(walls[n] == true && n != p2) continue;
 
         var gScore:Float = current.g + 1;
         var fScore:Float = gScore + Hex.distance(n, p2);
-        // if (maze.get(n.serialize())) fScore /= 2;
 
-        var ex:PathNode = explored.get(n.serialize());
+        if (maze[n]) fScore /= 2;
+
+        var ex:PathNode = explored[n];
 
         if (ex != null && fScore >= ex.f) {
           continue;
