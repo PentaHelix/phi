@@ -1,5 +1,6 @@
 package;
 
+import h2d.Scene;
 import phi.Entity;
 import phi.Universe;
 
@@ -21,7 +22,7 @@ class Game extends phi.Game {
   }
   
   override public function init () {
-    s2d.zoom = 3;
+    s2d.zoom = 1;
     s2d.x = 85 * 8/s2d.zoom;
     s2d.y = 45 * 8/s2d.zoom;
 
@@ -57,7 +58,10 @@ class Game extends phi.Game {
 
     var maze = gen.Dungeon.maze(doorways, rooms, 18);
 
-    map.set(maze, "floor_planks");
+    for (i in 0...6) {
+      var corridor = gen.Dungeon.corridor(rooms, maze, doorways[i*4], doorways[(i+1)*4+1]);
+      map.set(corridor, "floor_planks");
+    }
     map.set(doorways, "wall_bricks_doorway");
 
     // map.set(map.findPath(HexVec.offsets[0]*11, HexVec.offsets[1]*11), "wall_bricks");

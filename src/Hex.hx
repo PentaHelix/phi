@@ -48,6 +48,24 @@ class Hex {
     return result;
   }
 
+  public static function smoothen (hexes: IntMap<Bool>, exceptions: Array<HexVec>): IntMap<Bool> {
+    var removed;
+    do {
+      removed = false;
+      for (p => b in hexes) {
+        if (!b) continue;
+        var h = HexVec.deserialize(p);
+        if (exceptions.indexOf(h) != -1) continue;
+        var count = h.neighbors().count(n -> hexes.get(n.serialize()) || exceptions.indexOf(n) != -1);
+        if (count <= 1) {
+          hexes.set(p, false);
+          removed = true;
+        }
+      }
+    } while(removed);
+    return hexes;
+  }
+
   // utility
   public static function round (x: Float, y: Float, z: Float) {
     var rx = x.round();

@@ -70,13 +70,87 @@ class Dungeon {
         open.push(n);
       }
     }
+    
+    return passages;
+  }
 
-    var maze = [];
+  public static function corridor (w: Array<HexVec>, maze: IntMap<Bool>, p1: HexVec, p2: HexVec) {
+    var explored: IntMap<PathNode> = new IntMap<PathNode>();
+    var queue:PriorityQueue<PathNode> = new PriorityQueue<PathNode>();
+    var dist = Hex.distance(p1, p2);
 
-    for (h => b in passages) {
-      if (b) maze.push(HexVec.deserialize(h));
+    var walls: IntMap<Bool> = new IntMap<Bool>();
+    for (wall in w) {
+      walls.set(wall.serialize(), true);
     }
 
-    return maze;
+    queue.enqueue({
+      pos: p1,
+      prev: null,
+      g: 0,
+      h: dist,
+      f: dist
+    }, dist);
+
+    var found: Bool = false;
+    var current:PathNode = null;
+    while (!queue.isEmpty() && !found) {
+      current = queue.dequeue();
+      explored.set(current.pos.serialize(), current);
+
+      if (current.pos == p2) {
+        found = true;
+        break;
+      }
+
+      for (n in current.pos.neighbors()) {
+        if(walls.get(n.serialize()) == true && n != p2) continue;
+
+        var gScore:Float = current.g + 1;
+        var fScore:Float = gScore + Hex.distance(n, p2);
+        // if (maze.get(n.serialize())) fScore /= 2;
+
+        var ex:PathNode = explored.get(n.serialize());
+
+        if (ex != null && fScore >= ex.f) {
+          continue;
+        } else if (!queue.contains(ex) || fScore < ex.f) {
+          if (ex == null) {
+            ex = {
+              pos: n,
+              prev: null,
+              g: 0,
+              h: Hex.distance(n, p2),
+              f: 0,
+            }
+          }
+          if (ex.pos == p1) continue;
+          ex.prev = current;
+          ex.g = gScore;
+          ex.f = fScore;
+
+          if (queue.contains(ex)) {
+            queue.remove(ex);
+          }
+
+          queue.enqueue(ex, ex.f);
+        }
+      }
+    }
+
+    if (!found) return null;
+    var n: PathNode = current;
+    var path = [];
+    do {
+      trace(n.pos);
+      path.unshift(n.pos);
+    } while ((n = n.prev) != null);
+
+    return path;
   }
+}
+
+typedef MazeNode = {
+  var pos: HexVec;
+  var prev: MazeNode;
 }
