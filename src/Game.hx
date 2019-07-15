@@ -1,6 +1,5 @@
 package;
 
-import h2d.Scene;
 import phi.Entity;
 import phi.Universe;
 
@@ -10,6 +9,7 @@ import traits.HexTransform;
 import traits.HexActor;
 
 using Hex;
+using Utils;
 
 class Game extends phi.Game {
   var universe: Universe;
@@ -36,35 +36,69 @@ class Game extends phi.Game {
 
     phi.Game.warpTo(universe);
 
-    map = new HexMap(18);
+    var possibleCorridors = [
+      {r1: 6, r2: 0}, {r1: 6, r2: 1}, 
+      {r1: 6, r2: 2}, {r1: 6, r2: 3},
+      {r1: 6, r2: 4}, {r1: 6, r2: 5},
+      
+      {r1: 0, r2: 1}, {r1: 1, r2: 2}, 
+      {r1: 2, r2: 3}, {r1: 3, r2: 4},
+      {r1: 4, r2: 5}, {r1: 5, r2: 0},
+    ];
+
+    var connected: Array<Int> = [6];
+    var corridors = [];
+
+    while(connected.length != 7) {
+      var corr = possibleCorridors.filter(c -> corridors.indexOf(c) == -1).random();
+      if (connected.indexOf(corr.r1) == -1) connected.push(corr.r1);
+      else if (connected.indexOf(corr.r2) == -1) connected.push(corr.r2); 
+      corridors.push(corr);
+    }
     
-    var doorways: Array<HexVec> = [];
+    var possibleDoorways: Array<HexVec> = [];
     var rooms: Array<HexVec> = [];
 
+    map = new HexMap(20);
+
     for (s in HexVec.offsets.concat([HexVec.ZERO])) {
-      var room = gen.Dungeon.room().map(p -> p + s*11);
+      var room = gen.Dungeon.room().map(p -> p + s*13);
       map.fill(room, "floor_rocks");
       var outline = room.outline();
 
       rooms = rooms.concat(room).concat(outline);
       
-      for (i in 0...4) {
-        var idx: Int = Math.floor(outline.length/4) * i;
-        doorways.push(outline[idx]);
+      for (i in 0...6) {
+        var idx: Int = Math.floor(outline.length*i/6);
+        possibleDoorways.push(outline[idx]);
       }
       map.set(room.outline(), "wall_bricks");
     }
 
+    var maze = gen.Dungeon.maze(possibleDoorways, rooms, 18);
+    var doorways: Array<HexVec> = [];
 
-    var maze = gen.Dungeon.maze(doorways, rooms, 18);
+    for (c in corridors) {
+      trace(c);
+      var d1 = c.r1*6;
+      var d2 = c.r2*6;
+      var o1 = (c.r2 - (c.r1 - c.r2)) % 6;
+      var o2 = (c.r1 - (c.r2 - c.r1)) % 6;
+      if (c.r1 == 6) {
+        o1 = c.r2;
+        o2 = (-o2+3)%6;
+      }
 
-    for (i in 0...6) {
-      var corridor = gen.Dungeon.corridor(rooms, maze, doorways[i*4], doorways[(i+1)*4+1]);
+      if (o1 < 0) o1 += 6;
+      if (o2 < 0) o2 += 6;
+      d1 += o1;
+      d2 += o2;
+      var corridor = gen.Dungeon.corridor(rooms, maze, possibleDoorways[d1], possibleDoorways[d2]);
+      doorways.push(possibleDoorways[d1]);
+      doorways.push(possibleDoorways[d2]);
       map.set(corridor, "floor_planks");
     }
     map.set(doorways, "wall_bricks_doorway");
-
-    // map.set(map.findPath(HexVec.offsets[0]*11, HexVec.offsets[1]*11), "wall_bricks");
 
     new Entity([
       new HexTransform(HexVec.ZERO),

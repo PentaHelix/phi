@@ -144,7 +144,6 @@ class Dungeon {
     var n: PathNode = current;
     var path = [];
     do {
-      trace(n.pos);
       path.unshift(n.pos);
     } while ((n = n.prev) != null);
 

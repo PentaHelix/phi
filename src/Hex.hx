@@ -13,7 +13,7 @@ class Hex {
 
   public static function angle (v1: HexVec) {
     var v = v1.toPixel();
-    return Math.atan2(v.y, v.x);
+    return -Math.atan2(v.y, -v.x);
   }
 
   public static function outline (src: Array<HexVec>) {
