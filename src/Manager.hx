@@ -11,14 +11,16 @@ import traits.HexActor;
 using Hex;
 using Utils;
 
-class Game extends phi.Game {
-  var universe: Universe;
+class Manager extends phi.Game {
   public static var map: HexMap;
+  public static var actors: HexActorRule;
+  var universe: Universe;
+
 
   public static function main() {
     hxd.Res.initEmbed();
     C.init();
-    new Game();
+    new Manager();
   }
   
   override public function init () {
@@ -32,7 +34,9 @@ class Game extends phi.Game {
     universe.addPass(pass);
 
     pass.add(new HexMapRule(s2d));
-    pass.add(new HexActorRule(s2d));
+    
+    actors = new HexActorRule(s2d);
+    pass.add(actors);
 
     phi.Game.warpTo(universe);
 
@@ -99,13 +103,15 @@ class Game extends phi.Game {
       map.set(corridor, "floor_planks");
     }
     map.set(doorways, "wall_bricks_doorway");
-
-    var transform = new HexTransform(HexVec.ZERO);
-    var actor = new HexActor(0, null);
-    actor.controller = new controllers.Hero(actor, transform);
+    
     new Entity([
-      transform,
-      actor
+      new HexTransform(HexVec.ZERO),
+      new HexActor(0, new controllers.Hero())
+    ], universe);
+
+    new Entity([
+      new HexTransform(HexVec.offsets[0] * 2),
+      new HexActor(1, new controllers.Hostile())
     ], universe);
 
     map.createTiles(universe);

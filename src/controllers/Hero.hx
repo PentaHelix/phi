@@ -1,14 +1,13 @@
 package controllers;
 
-import traits.HexTransform;
-import traits.HexActor;
+import rules.HexActorRule.Actor;
 import hxd.Key;
 import actions.WalkAction;
 
 class Hero implements Controller {
-  var actor: HexActor;
-  var transform: HexTransform;
-  
+  public var type = 'hero';
+  public var self: Actor;
+
   private static var keyMap = [
     Key.F, // 0
     Key.D, // 1
@@ -18,15 +17,12 @@ class Hero implements Controller {
     Key.E, // 5
   ];
 
-  public function new (actor: HexActor, transform: HexTransform) {
-    this.actor = actor;
-    this.transform = transform;
-  }
+  public function new () {}
 
   public function getAction () {
     for (k in 0...6) {
       if (Key.isPressed(keyMap[k])) {
-        return new WalkAction(actor, transform, HexVec.offsets[k], k);
+        return new WalkAction(self, k);
       }
     }
     return null;

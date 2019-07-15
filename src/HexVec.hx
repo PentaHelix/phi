@@ -116,6 +116,13 @@ abstract HexVec(Vector) from Vector to Vector {
     }
   }
 
+  public static function direction (h: HexVec):Int {
+    for (i in 0...6) {
+      if (h == offsets[i]) return i;
+    }
+    return 6;
+  }
+
   //getters / setters
 
   public function get_x (): Int {

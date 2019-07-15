@@ -1,5 +1,6 @@
 package rules;
 
+import controllers.Passive;
 import phi.Game;
 import h2d.Scene;
 import hxd.Res;
@@ -67,10 +68,26 @@ class HexActorRule implements Rule<Actor> {
 
   public function onMatched (a: Actor, e: Entity) {
     a.sprite = new Bitmap(actors[a.actor.actorId][0], s2d);
+    a.actor.controller.self = a;
     order.add(e);
   }
 
   public function onUnmatched (a: Actor, e: Entity) {
     order.add(e);
+  }
+
+  public function getNearestNonHostile (pos: HexVec): Actor {
+    var nearest: Actor = null;
+    var minDist = 100000;
+    for (e in entities) {
+      if (e.actor.controller.type == 'hostile') continue;
+      var d = Hex.distance(pos, e.transform.pos);
+      if (d < minDist) {
+        nearest = e;
+        minDist = d;
+      }
+    }
+    
+    return nearest;
   }
 }

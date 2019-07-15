@@ -1,5 +1,6 @@
 package;
 
+import rules.HexActorRule.Actor;
 import ds.VecMap;
 import ds.PriorityQueue;
 import traits.HexActor;
@@ -132,7 +133,7 @@ class HexMap {
 typedef MapData = {
   var items: Array<String>;
   var tile: HexTile;
-  var actor: HexActor;
+  var actor: Actor;
 }
 
 typedef PathNode = {

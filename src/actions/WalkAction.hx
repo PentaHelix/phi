@@ -1,26 +1,28 @@
 package actions;
 
-import traits.HexTransform;
-import traits.HexActor;
+import rules.HexActorRule.Actor;
 
 class WalkAction implements Action {
-  var actor: HexActor;
-  var transform: HexTransform;
+  var self: Actor;
+  var direction: Int;
   var move: HexVec;
-  var newFacing: Int;
 
-  public function new (actor: HexActor, transform: HexTransform, move: HexVec, newFacing: Int) {
-    this.actor = actor;
-    this.transform = transform;
-    this.move = move;
-    this.newFacing = newFacing;
+  public function new (self: Actor, direction: Int) {
+    this.self = self;
+    this.direction = direction;
   }
 
   public function perform () {
-    if (Game.map.at(transform.pos + move).tile == null) return false;
-    if (!Game.map.at(transform.pos + move).tile.data.passable) return false;
-    transform.pos += move;
-    actor.facing = newFacing;
+    var move = HexVec.offsets[direction];
+    if (Manager.map.at(self.transform.pos + move).tile == null) return false;
+    if (!Manager.map.at(self.transform.pos + move).tile.data.passable) return false;
+    if (Manager.map.at(self.transform.pos + move).actor != null) return false;
+    
+    Manager.map.at(self.transform.pos).actor = null;
+    self.transform.pos += move;
+    Manager.map.at(self.transform.pos).actor = self;
+    
+    self.actor.facing = direction;
     return true;
   }
 }

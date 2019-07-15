@@ -7,4 +7,4 @@
 -cp src
 -hl bin/phi.hl
 
--main Game
+-main Manager
