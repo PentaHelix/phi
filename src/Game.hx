@@ -13,7 +13,7 @@ using Utils;
 
 class Game extends phi.Game {
   var universe: Universe;
-  var map: HexMap;
+  public static var map: HexMap;
 
   public static function main() {
     hxd.Res.initEmbed();
@@ -100,9 +100,12 @@ class Game extends phi.Game {
     }
     map.set(doorways, "wall_bricks_doorway");
 
+    var transform = new HexTransform(HexVec.ZERO);
+    var actor = new HexActor(0, null);
+    actor.controller = new controllers.Hero(actor, transform);
     new Entity([
-      new HexTransform(HexVec.ZERO),
-      new HexActor(1, null)
+      transform,
+      actor
     ], universe);
 
     map.createTiles(universe);

@@ -16,7 +16,6 @@ typedef Actor = {
   @:trait var transform: HexTransform;
   @:trait var actor: HexActor;
   var ?sprite: Bitmap;
-  var ?facing: Int;
 }
 
 class HexActorRule implements Rule<Actor> {
@@ -34,29 +33,28 @@ class HexActorRule implements Rule<Actor> {
   }
 
   public function tick () {
-    // current %= entities.
+    current %= order.length;
     var actor = entities.get(current).actor;
     
     if (actor.energy + actor.speed >= 100) {
-      actor.energy -= 100;
-
       var action = actor.controller.getAction();
-      if (action == null) return;
-
-      var success = action.perform();
-      if (!success) return;
-      
-      actor.energy += actor.speed - 100;
-      current++;
+      if (action != null) {
+        var success = action.perform();
+        if (success) {
+          actor.energy -= 100 - actor.speed;
+          current++;
+        }
+      }
+    } else {
+      actor.energy += actor.speed;
     }
 
     for (a in entities) {
-      move(a);
       var pos = a.transform.pos.toPixel();
       a.sprite.x += (pos.x - a.sprite.x) * 0.3;
       a.sprite.y += (pos.y - 5 - a.sprite.y) * 0.3;
       // a.sprite.setPosition(pos.x, pos.y - 4);
-      a.sprite.tile = actors[a.actor.actorId][spriteFacing[a.facing]];
+      a.sprite.tile = actors[a.actor.actorId][spriteFacing[a.actor.facing]];
     }
   }
 
@@ -66,24 +64,6 @@ class HexActorRule implements Rule<Actor> {
     2,
     3,3
   ];
-
-  private static var keyMap = [
-    Key.F, // 0
-    Key.D, // 1
-    Key.S, // 2
-    Key.A, // 3
-    Key.W, // 4
-    Key.E, // 5
-  ];
-
-  private function move (a: Actor) {
-    for (k in 0...6) {
-      if (Key.isPressed(keyMap[k])) {
-        a.transform.pos += HexVec.offsets[k];
-        a.facing = k;
-      }
-    }
-  }
 
   public function onMatched (a: Actor, e: Entity) {
     a.sprite = new Bitmap(actors[a.actor.actorId][0], s2d);
