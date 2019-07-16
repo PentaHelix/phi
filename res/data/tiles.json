@@ -3,24 +3,28 @@
     "id": 0,
     "name": "floor_planks",
     "variants": [],
-    "passable": true
+    "passable": true,
+    "castsShadow": false
   },
   {
     "id": 1,
     "name": "floor_rocks",
     "variants": [],
-    "passable": true
+    "passable": true,
+    "castsShadow": false
   },
   {
     "id": 2,
     "name": "wall_bricks",
     "variants": [],
-    "passable": false
+    "passable": false,
+    "castsShadow": true
   },
   {
     "id": 3,
     "name": "wall_bricks_doorway",
     "variants": [],
-    "passable": true
+    "passable": true,
+    "castsShadow": true
   }
 ]

@@ -17,11 +17,11 @@ class Dungeon {
 
     while (hexes.length < ROOM_MIN_SIZE || Math.random() > hexes.length / ROOM_MAX_SIZE) {
       var outline = hexes.outline();
-      if (Math.random() > hexes.length / ROOM_MAX_SIZE * 1.2) {
-        hexes.push(outline.random());
-      } else {
-        hexes = hexes.concat(outline);
-      }
+
+      hexes.push(outline.random());
+      outline = hexes.outline();
+    
+      hexes = hexes.concat(outline);
     }
 
     return hexes;

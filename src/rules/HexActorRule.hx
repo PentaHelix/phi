@@ -48,6 +48,7 @@ class HexActorRule implements Rule<Actor> {
       }
     } else {
       actor.energy += actor.speed;
+      current++;
     }
 
     for (a in entities) {

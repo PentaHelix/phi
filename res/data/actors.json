@@ -1,6 +1,12 @@
 [
   {
     "id": 0,
-    "name": "mage"
+    "name": "hero",
+    "speed": 50
+  },
+  {
+    "id": 1,
+    "name": "rat",
+    "speed": 40
   }
 ]

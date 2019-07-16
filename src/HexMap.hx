@@ -1,12 +1,12 @@
 package;
 
+import h3d.Vector;
 import rules.HexActorRule.Actor;
 import ds.VecMap;
 import ds.PriorityQueue;
 import traits.HexActor;
 import phi.Universe;
 import phi.Entity;
-import haxe.ds.Vector;
 
 import traits.HexTile;
 import traits.HexTransform;
@@ -117,6 +117,18 @@ class HexMap {
     } while ((n = n.prev) != null);
 
     return path;
+  }
+
+  public function isVisibleFrom (p1: Vector, p2: Vector, ?maxLength=-1): Bool {
+    var dist = Hex.distance(p1, p2);
+    if (maxLength > 0 && dist >= maxLength) return false;
+    var lerp = (a: Float, b: Float, t: Float) -> a + (b - a) * t;
+    for (i in 0...dist) {
+      var t = i / dist;
+      var h = Hex.round(lerp(p1.x, p2.x, t), lerp(p1.y, p2.y, t), lerp(p1.z, p2.z, t));
+      if (at(h).tile == null || at(h).tile.data.castShadow) return false;
+    }
+    return true;
   }
 
   public function createTiles (u: Universe) {

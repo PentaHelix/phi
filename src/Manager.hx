@@ -83,7 +83,6 @@ class Manager extends phi.Game {
     var doorways: Array<HexVec> = [];
 
     for (c in corridors) {
-      trace(c);
       var d1 = c.r1*6;
       var d2 = c.r2*6;
       var o1 = (c.r2 - (c.r1 - c.r2)) % 6;
@@ -103,23 +102,28 @@ class Manager extends phi.Game {
       map.set(corridor, "floor_planks");
     }
     map.set(doorways, "wall_bricks_doorway");
-    
+    hero = new HexTransform(HexVec.ZERO);
     new Entity([
-      new HexTransform(HexVec.ZERO),
-      new HexActor(0, new controllers.Hero())
+      hero,
+      new HexActor("hero", new controllers.Hero())
     ], universe);
 
+    rat = new HexTransform(HexVec.offsets[0] * 2);
     new Entity([
-      new HexTransform(HexVec.offsets[0] * 2),
-      new HexActor(1, new controllers.Hostile())
+      rat,
+      new HexActor("rat", new controllers.Hostile())
     ], universe);
 
     map.createTiles(universe);
   }
 
+  var hero: HexTransform;
+  var rat: HexTransform;
+
   var hexes: Array<HexVec> = [HexVec.ZERO];
 
   override public function tick () {
     super.tick();
+    trace(map.isVisibleFrom(hero.pos, rat.pos));
   }
 }
