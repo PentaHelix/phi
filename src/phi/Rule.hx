@@ -49,11 +49,98 @@ class Rule {
       pos: Context.currentPos(),
     });
 
+    var hasConstructor = false;
+    var hasOnMatched = false;
+    var hasOnUnmatched = false;
+    var hasTick = false;
+
+    for (field in fields) {
+      if (field.name == 'new') hasConstructor = true;
+      if (field.name == 'onMatched') hasOnMatched = true;
+      if (field.name == 'onUnmatched') hasOnUnmatched = true;
+      if (field.name == 'tick') hasTick = true;
+    }
+
+    if (!hasConstructor) fields.push(constructor());
+    if (!hasOnMatched) fields.push(onMatched(ct));
+    if (!hasOnUnmatched) fields.push(onUnmatched(ct));
+    if (!hasTick) fields.push(tick());
+
     // add match function
     fields.push(mask(ct));
     fields.push(matcher(ct));
     fields.push(remover());
     return fields;
+  }
+
+  private static function constructor(): Field {
+    return {
+      name: 'new',
+      kind: FFun({
+        args: [],
+        ret: macro : Void,
+        expr: macro {}
+      }),
+      pos: Context.currentPos(),
+      access: [APublic]
+    };
+  }
+
+  private static function onMatched(ct: ComplexType): Field {
+    return {
+      name: 'onMatched',
+      kind: FFun({
+        args: [
+          {
+            name: 'e',
+            type: ct
+          },
+          {
+            name: 'entity',
+            type: macro : phi.Entity
+          }
+        ],
+        ret: macro : Void,
+        expr: macro {}
+      }),
+      pos: Context.currentPos(),
+      access: [APublic]
+    };
+  }
+
+  private static function onUnmatched(ct: ComplexType): Field {
+    return {
+      name: 'onUnmatched',
+      kind: FFun({
+        args: [
+          {
+            name: 'e',
+            type: ct
+          },
+          {
+            name: 'entity',
+            type: macro : phi.Entity
+          }
+        ],
+        ret: macro : Void,
+        expr: macro {}
+      }),
+      pos: Context.currentPos(),
+      access: [APublic]
+    };
+  }
+
+  private static function tick(): Field {
+    return {
+      name: 'tick',
+      kind: FFun({
+        args: [],
+        ret: macro : Void,
+        expr: macro {}
+      }),
+      pos: Context.currentPos(),
+      access: [APublic]
+    };
   }
 
   private static function matcher (t: haxe.macro.ComplexType): Field {
@@ -184,6 +271,7 @@ class Rule {
       })
     }
   }
+
   private static function getTypeId (field: Field): Int {
     return switch(field.kind) {
       case FVar(t, e): getTypeIdOfType(t);

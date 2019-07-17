@@ -34,6 +34,7 @@ class Manager extends phi.Game {
     universe.addPass(pass);
 
     pass.add(new HexMapRule(s2d));
+    pass.add(new rules.TestRule());
     
     actors = new HexActorRule(s2d);
     pass.add(actors);
