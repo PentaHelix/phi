@@ -2,11 +2,17 @@
   {
     "id": 0,
     "name": "hero",
-    "speed": 50
+    "speed": 50,
+    "maxHealth": 32,
+    "baseAttack": "1d6+2",
+    "strength": 10
   },
   {
     "id": 1,
     "name": "rat",
-    "speed": 40
+    "speed": 40,
+    "maxHealth": 16,
+    "baseAttack": "1d6",
+    "strength": 9
   }
 ]

@@ -1,5 +1,6 @@
 package traits;
 
+import ds.DiceSet;
 import phi.Trait;
 import controllers.Controller;
 
@@ -10,11 +11,13 @@ class HexActor implements Trait {
   public var facing: Int = 0;
   public var energy: Int = 0;
 
-  public var level: Int = 1;
-  public var experience: Int = 0;
+  public var baseAttack: DiceSet;
 
-  // public var 
+  public var health: Int;
+  public var maxHealth: Int;
+
   public var speed: Int;
+  public var strength: Int;
 
   public var controller: Controller;
 
@@ -23,6 +26,8 @@ class HexActor implements Trait {
     this.name = name;
     this.actorId = data.id;
     this.speed = data.speed;
+    this.baseAttack = data.baseAttack;
+    this.strength = data.strength;
     this.controller = controller;
   }
 }

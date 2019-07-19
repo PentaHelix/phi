@@ -1,6 +1,7 @@
 package;
 
 import haxe.ds.StringMap;
+import ds.DiceSet;
 
 class C {
   public static var tiles: StringMap<TileData> = new StringMap<TileData>();
@@ -18,9 +19,10 @@ class C {
       tiles.set(tileData[i].name, tileData[i]);
     }
 
-    var actorData:Array<ActorData> = haxe.Json.parse(hxd.Res.load('data/actors.json').entry.getText());
+    var actorData:Array<Dynamic> = haxe.Json.parse(hxd.Res.load('data/actors.json').entry.getText());
     ACTOR_COUNT = actorData.length;
     for (i in 0...actorData.length) {
+      actorData[i].baseAttack = new DiceSet(actorData[i].baseAttack);
       actors.set(actorData[i].name, actorData[i]);
     }
     
@@ -44,6 +46,8 @@ typedef ActorData = {
   var id: Int;
   var name: String;
   var speed: Int;
+  var baseAttack: DiceSet;
+  var strength: Int;
 }
 
 typedef ItemData = {

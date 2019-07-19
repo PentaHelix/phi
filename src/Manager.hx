@@ -1,5 +1,6 @@
 package;
 
+import h3d.Engine;
 import phi.Entity;
 import phi.Universe;
 
@@ -24,7 +25,7 @@ class Manager extends phi.Game {
   }
   
   override public function init () {
-    s2d.zoom = 1;
+    s2d.zoom = 4;
     s2d.x = 85 * 8/s2d.zoom;
     s2d.y = 45 * 8/s2d.zoom;
 
@@ -34,7 +35,7 @@ class Manager extends phi.Game {
     universe.addPass(pass);
 
     pass.add(new HexMapRule(s2d));
-    pass.add(new rules.TestRule());
+    pass.add(new rules.HeroRule(s2d));
     
     actors = new HexActorRule(s2d);
     pass.add(actors);
@@ -106,7 +107,8 @@ class Manager extends phi.Game {
     hero = new HexTransform(HexVec.ZERO);
     new Entity([
       hero,
-      new HexActor("hero", new controllers.Hero())
+      new HexActor("hero", new controllers.Hero()),
+      new traits.Hero()
     ], universe);
 
     rat = new HexTransform(HexVec.offsets[0] * 2);
@@ -125,6 +127,10 @@ class Manager extends phi.Game {
 
   override public function tick () {
     super.tick();
-    trace(map.isVisibleFrom(hero.pos, rat.pos));
+  }
+
+  override public function render (e: Engine) {
+    s2d.renderer.clear(0x080008);
+    super.render(e);
   }
 }

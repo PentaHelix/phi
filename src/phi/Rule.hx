@@ -66,7 +66,6 @@ class Rule {
     if (!hasOnUnmatched) fields.push(onUnmatched(ct));
     if (!hasTick) fields.push(tick());
 
-    // add match function
     fields.push(mask(ct));
     fields.push(matcher(ct));
     fields.push(remover());

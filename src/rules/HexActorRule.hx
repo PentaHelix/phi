@@ -53,8 +53,10 @@ class HexActorRule implements Rule<Actor> {
 
     for (a in entities) {
       var pos = a.transform.pos.toPixel();
-      a.sprite.x += (pos.x - a.sprite.x) * 0.3;
-      a.sprite.y += (pos.y - 5 - a.sprite.y) * 0.3;
+      a.sprite.x += (pos.x - a.sprite.x) * 0.15;
+      a.sprite.y += (pos.y - 5 - a.sprite.y) * 0.15;
+      a.transform.screenPos.x = a.sprite.x;
+      a.transform.screenPos.y = a.sprite.y;
       // a.sprite.setPosition(pos.x, pos.y - 4);
       a.sprite.tile = actors[a.actor.actorId][spriteFacing[a.actor.facing]];
     }
