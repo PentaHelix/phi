@@ -1,5 +1,6 @@
 package;
 
+import traits.HexStructure;
 import h3d.Engine;
 import phi.Entity;
 import phi.Universe;
@@ -8,6 +9,8 @@ import rules.HexMapRule;
 import rules.HexActorRule;
 import traits.HexTransform;
 import traits.HexActor;
+
+import structureTypes.Door;
 
 using Hex;
 using Utils;
@@ -36,6 +39,7 @@ class Manager extends phi.Game {
 
     pass.add(new HexMapRule(s2d));
     pass.add(new rules.HeroRule(s2d));
+    pass.add(new rules.HexStructureRule(s2d));
     
     actors = new HexActorRule(s2d);
     pass.add(actors);
@@ -103,7 +107,13 @@ class Manager extends phi.Game {
       doorways.push(possibleDoorways[d2]);
       map.set(corridor, "floor_planks");
     }
-    map.set(doorways, "wall_bricks_doorway");
+    map.set(doorways, "wall_bricks");
+    for (d in doorways) {
+      new Entity([
+        new HexTransform(d),
+        new HexStructure("door", new Door())
+      ], universe);
+    }
     hero = new HexTransform(HexVec.ZERO);
     new Entity([
       hero,

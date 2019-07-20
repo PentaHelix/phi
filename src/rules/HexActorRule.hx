@@ -23,7 +23,7 @@ class HexActorRule implements Rule<Actor> {
   var actors: Array<Array<Tile>>;
   var s2d: Scene;
   var current: Int = 0;
-  var order: List<Entity> = new List<Entity>();
+  var order: Array<Entity> = new Array<Entity>();
 
   public function new (s: Scene) {
     s2d = s;
@@ -35,7 +35,7 @@ class HexActorRule implements Rule<Actor> {
 
   public function tick () {
     current %= order.length;
-    var actor = entities.get(current).actor;
+    var actor = entities.get(order[current]).actor;
     
     if (actor.energy + actor.speed >= 100) {
       var action = actor.controller.getAction();
@@ -70,13 +70,14 @@ class HexActorRule implements Rule<Actor> {
   ];
 
   public function onMatched (a: Actor, e: Entity) {
+    Manager.map.at(a.transform.pos).actor = a;
     a.sprite = new Bitmap(actors[a.actor.actorId][0], s2d);
     a.actor.controller.self = a;
-    order.add(e);
+    order.push(e);
   }
 
   public function onUnmatched (a: Actor, e: Entity) {
-    order.add(e);
+    order.remove(e);
   }
 
   public function getNearestNonHostile (pos: HexVec): Actor {

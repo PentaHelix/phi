@@ -1,0 +1,18 @@
+[
+  {
+    "id": 0,
+    "name": "lader_down"
+  },
+  {
+    "id": 1,
+    "name": "ladder_up"
+  },
+  {
+    "id": 2,
+    "name": "door",
+    "states": [
+      "closed",
+      "open"
+    ]
+  }
+]

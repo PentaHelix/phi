@@ -4,12 +4,12 @@ import h3d.Vector;
 import rules.HexActorRule.Actor;
 import ds.VecMap;
 import ds.PriorityQueue;
-import traits.HexActor;
 import phi.Universe;
 import phi.Entity;
 
 import traits.HexTile;
 import traits.HexTransform;
+import traits.HexStructure;
 
 using Hex;
 
@@ -27,7 +27,8 @@ class HexMap {
       data[v] = {
         items: [],
         tile: null,
-        actor: null
+        actor: null,
+        structure: null
       };
     }
 
@@ -52,7 +53,7 @@ class HexMap {
 
   public function findPath (p1: HexVec, p2: HexVec, ?maxLen=9999) {
     if(at(p1).tile == null || at(p2).tile == null) return null;
-    if(!at(p1).tile.data.passable) return null;
+    if(!at(p1).tile.passable) return null;
     if(p1 == p2) return [];
 
     var explored: VecMap<PathNode> = new VecMap<PathNode>();
@@ -73,7 +74,7 @@ class HexMap {
       current = queue.dequeue();
       explored[current.pos] = current;
       if(at(current.pos).tile == null) continue;
-      if(!at(current.pos).tile.data.passable) continue;
+      if(!at(current.pos).tile.passable) continue;
 
       if (current.pos == p2) {
         found = true;
@@ -126,7 +127,7 @@ class HexMap {
     for (i in 0...dist) {
       var t = i / dist;
       var h = Hex.round(lerp(p1.x, p2.x, t), lerp(p1.y, p2.y, t), lerp(p1.z, p2.z, t));
-      if (at(h).tile == null || at(h).tile.data.castShadow) return false;
+      if (at(h).tile == null || at(h).tile.castShadow) return false;
     }
     return true;
   }
@@ -143,9 +144,10 @@ class HexMap {
 }
 
 typedef MapData = {
-  var items: Array<String>;
   var tile: HexTile;
+  var items: Array<String>;
   var actor: Actor;
+  var structure: HexStructure;
 }
 
 typedef PathNode = {

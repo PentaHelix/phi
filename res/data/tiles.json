@@ -19,12 +19,5 @@
     "variants": [],
     "passable": false,
     "castsShadow": true
-  },
-  {
-    "id": 3,
-    "name": "wall_bricks_doorway",
-    "variants": [],
-    "passable": true,
-    "castsShadow": true
   }
 ]

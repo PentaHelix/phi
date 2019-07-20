@@ -7,10 +7,12 @@ class C {
   public static var tiles: StringMap<TileData> = new StringMap<TileData>();
   public static var actors: StringMap<ActorData> = new StringMap<ActorData>();
   public static var items: StringMap<ItemData> = new StringMap<ItemData>();
+  public static var structures: StringMap<StructureData> = new StringMap<StructureData>();
 
   public static var TILE_COUNT:Int;
   public static var ACTOR_COUNT:Int;
   public static var ITEM_COUNT:Int;
+  public static var STRUCTURE_COUNT:Int;
 
   public static function init () {
     var tileData:Array<TileData> = haxe.Json.parse(hxd.Res.load('data/tiles.json').entry.getText());
@@ -30,6 +32,15 @@ class C {
     ITEM_COUNT = itemData.length;
     for (i in 0...itemData.length) {
       items.set(itemData[i].name, itemData[i]);
+    }
+
+    var structureData:Array<Dynamic> = haxe.Json.parse(hxd.Res.load('data/structures.json').entry.getText());
+    STRUCTURE_COUNT = structureData.length;
+    for (i in 0...structureData.length) {
+      if (structureData[i].states == null) {
+        structureData[i].states = ['default'];
+      }
+      structures.set(structureData[i].name, structureData[i]);
     }
   }
 }
@@ -54,4 +65,10 @@ typedef ItemData = {
   var id: Int;
   var name: String;
   var equippable: Bool;
+}
+
+typedef StructureData = {
+  var id: Int;
+  var name: String;
+  var states: Array<String>;
 }
