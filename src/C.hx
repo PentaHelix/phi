@@ -61,7 +61,7 @@ typedef TileData = {
   var name: String;
   var variants: Array<Float>;
   var passable: Bool;
-  var castShadow: Bool;
+  var castsShadow: Bool;
 }
 
 typedef ActorData = {

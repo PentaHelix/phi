@@ -126,8 +126,28 @@ class HexMap {
     var lerp = (a: Float, b: Float, t: Float) -> a + (b - a) * t;
     for (i in 1...dist) {
       var t = i / dist;
-      var h = Hex.round(lerp(p1.x, p2.x, t), lerp(p1.y, p2.y, t), lerp(p1.z, p2.z, t));
-      if (at(h).tile == null || at(h).tile.castShadow) return false;
+      var dx = lerp(p1.x, p2.x, t);
+      var dy = lerp(p1.y, p2.y, t);
+      var dz = lerp(p1.z, p2.z, t);
+
+      var h1 = null;
+      var h2 = null;
+
+      if (Math.abs(dx % 1 - 0.5) < 0.01) {
+        h1 = Hex.round(dx+0.5, dy, dz);
+        h2 = Hex.round(dx-0.5, dy, dz);
+      } else if (Math.abs(dy % 1 - 0.5) < 0.01) {
+        h1 = Hex.round(dx, dy+0.5, dz);
+        h2 = Hex.round(dx, dy-0.5, dz);
+      } else if (Math.abs(dz % 1 - 0.5) < 0.01) {
+        h1 = Hex.round(dx, dy, dz+0.5);
+        h2 = Hex.round(dx, dy, dz-0.5);
+      } else {
+        h1 = Hex.round(dx, dy, dz);
+      }
+      var solid1 = at(h1).tile == null || at(h1).tile.castsShadow;
+      var solid2 = h2 == null || at(h2).tile == null || at(h2).tile.castsShadow;
+      if (solid1 && solid2) return false;
     }
     return true;
   }

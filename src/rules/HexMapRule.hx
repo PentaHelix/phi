@@ -38,7 +38,7 @@ class HexMapRule implements Rule<Tiles> {
     makeTile(t);
   }
 
-  public function onUnmatched (e: Tiles, e: Entity) {
+  public function onUnmatched (tile: Tiles, e: Entity) {
     tileGroup.clear();
     for (t in entities) {
       makeTile(t);
