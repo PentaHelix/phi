@@ -1,9 +1,9 @@
 package rules;
 
+import phi.Universe;
 import h2d.Tile;
 import hxd.Res;
 import h2d.TileGroup;
-import h2d.Scene;
 import phi.Rule;
 import phi.Entity;
 
@@ -16,14 +16,12 @@ typedef Tiles = {
 }
 
 class HexMapRule implements Rule<Tiles> {
-  var s2d: Scene;
   var group: TileGroup;
   var tiles: Array<Tile> = [];
 
-  public function new (s2d: Scene) {
-    this.s2d = s2d;
+  public function new () {
     var tileMap = Res.load("tiles.png").toTile();
-    group = new TileGroup(tileMap, s2d);
+    group = new TileGroup(tileMap, null);
 
     tiles = [
 			 for(x in 0 ... C.TILE_COUNT)
@@ -32,7 +30,9 @@ class HexMapRule implements Rule<Tiles> {
 		];
   }
 
-  public function tick () {}
+  public function onWarp (u: Universe) {
+    u.s2d.addChildAt(group, 0);
+  }
 
   public function onMatched (t: Tiles, e: Entity) {
     makeTile(t);

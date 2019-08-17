@@ -1,12 +1,10 @@
 package rules;
 
-import controllers.Passive;
 import phi.Game;
 import h2d.Scene;
 import hxd.Res;
 import h2d.Bitmap;
 import h2d.Tile;
-import hxd.Key;
 import phi.Entity;
 import phi.Rule;
 
@@ -21,12 +19,10 @@ typedef Actor = {
 
 class HexActorRule implements Rule<Actor> {
   var actors: Array<Array<Tile>>;
-  var s2d: Scene;
   var current: Int = 0;
   var order: Array<Entity> = new Array<Entity>();
 
-  public function new (s: Scene) {
-    s2d = s;
+  public function new () {
     actors = Res.load("actors.png")
       .toTile()
       .grid(16)
@@ -34,6 +30,7 @@ class HexActorRule implements Rule<Actor> {
   }
 
   public function tick () {
+    if (order.length == 0) return;
     current %= order.length;
     var actor = entities.get(order[current]).actor;
     
@@ -53,11 +50,13 @@ class HexActorRule implements Rule<Actor> {
 
     for (a in entities) {
       var pos = a.transform.pos.toPixel();
+      // TODO: animate actor movement to be smoother
+      // a.sprite.setPosition(pos.x, pos.y - 5);
       a.sprite.x += (pos.x - a.sprite.x) * 0.15;
       a.sprite.y += (pos.y - 5 - a.sprite.y) * 0.15;
+      
       a.transform.screenPos.x = a.sprite.x;
       a.transform.screenPos.y = a.sprite.y;
-      // a.sprite.setPosition(pos.x, pos.y - 4);
       a.sprite.tile = actors[a.actor.actorId][spriteFacing[a.actor.facing]];
     }
   }
@@ -70,14 +69,17 @@ class HexActorRule implements Rule<Actor> {
   ];
 
   public function onMatched (a: Actor, e: Entity) {
-    Manager.map.at(a.transform.pos).actor = a;
-    a.sprite = new Bitmap(actors[a.actor.actorId][0], s2d);
+    Manager.inst.map.at(a.transform.pos).actor = a;
+    a.sprite = new Bitmap(actors[a.actor.actorId][0]);
+    Game.universe.s2d.addChildAt(a.sprite, 1);
     a.actor.controller.self = a;
     order.push(e);
   }
 
   public function onUnmatched (a: Actor, e: Entity) {
+    trace(e);
     order.remove(e);
+    a.sprite.remove();
   }
 
   public function getNearestNonHostile (pos: HexVec): Actor {

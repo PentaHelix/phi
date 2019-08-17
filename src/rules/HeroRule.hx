@@ -1,5 +1,6 @@
 package rules;
 
+import phi.Game;
 import h2d.Scene;
 import phi.Rule;
 import traits.HexTransform;
@@ -10,12 +11,8 @@ typedef Hero = {
 }
 
 class HeroRule implements Rule<Hero> {
-  var s2d: Scene;
-  public function new (s2d: Scene) {
-    this.s2d = s2d;
-  }
-  
   public function tick () {
+    var s2d = Game.universe.s2d;
     for (e in entities) {
       if (e.hero.cameraFocused) {
         var pos = e.transform.screenPos;

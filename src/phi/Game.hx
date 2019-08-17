@@ -8,6 +8,7 @@ typedef EntityInfo = {
   universe: Universe
 }
 class Game extends hxd.App {
+  public static var passes: Array<Pass> = [];
   public static var universe: Universe;
   public static var dt: Float;
   public static var entities: IntMap<EntityInfo> = new IntMap<EntityInfo>();
@@ -19,13 +20,34 @@ class Game extends hxd.App {
   override public function update (dt: Float) {
     Game.dt = dt;
     tick();
-    Game.universe.tick();
+    for (pass in passes) {
+      pass.tick();
+    }
   }
 
   public function tick () {}
 
-  public static function warpTo (u: Universe) {
+  public function warpTo (u: Universe) {
+    if (universe != null) {
+      for (e in universe.entities) {
+        for (pass in passes) {
+          pass.removeEntity(e);
+        }
+      }
+    }
+
     Game.universe = u;
+    setScene(u.s2d);
+    
+    for (e in universe.entities) {
+      for (pass in passes) {
+        pass.match(e);
+      }
+    }
+
+    for (pass in passes) {
+      pass.onWarp(u);
+    }
   }
 
   public static function registerEntity (e: Entity, u: Universe) {
@@ -42,6 +64,12 @@ class Game extends hxd.App {
   }
 
   public static function match (e: Entity) {
-    Game.entities.get(e).universe.match(e);
+    for (pass in passes) {
+      pass.match(e);
+    }
+  }
+
+  public function addPass (p: Pass) {
+    passes.push(p);
   }
 }

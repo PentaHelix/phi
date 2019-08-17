@@ -1,8 +1,8 @@
 package rules;
 
+import phi.Game;
 import hxd.Res;
 import h2d.Tile;
-import h2d.Scene;
 import phi.Entity;
 import h2d.Bitmap;
 import traits.HexStructure;
@@ -16,10 +16,8 @@ typedef Structure = {
 }
 
 class HexStructureRule implements Rule<Structure> {
-  private var s2d: Scene;
   private var tiles: Array<Array<Tile>>;
-  public function new (s2d: Scene) {
-    this.s2d = s2d;
+  public function new () {
     this.tiles = Res.load('structures.png').toTile().grid(16)
       .map(arr -> arr.map(t -> t.center()));
   }
@@ -31,12 +29,13 @@ class HexStructureRule implements Rule<Structure> {
   }
 
   public function onMatched (s: Structure, e: Entity) {
-    Manager.map.at(s.transform.pos).structure = s.structure;
-    s.structure.type.tile = Manager.map.at(s.transform.pos).tile;
+    Manager.inst.map.at(s.transform.pos).structure = s.structure;
+    s.structure.type.tile = Manager.inst.map.at(s.transform.pos).tile;
     s.structure.type.onPlace();
+
     var pos = s.transform.pos.toPixel();
-    s.bitmap = new Bitmap(s2d);
-    s.bitmap.tile = tiles[s.structure.structureId][0];
+    s.bitmap = new Bitmap(tiles[s.structure.structureId][0]);
+    Game.universe.s2d.addChildAt(s.bitmap, 1);
     s.bitmap.setPosition(pos.x, pos.y);
   }
 }

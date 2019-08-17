@@ -4,6 +4,17 @@ import haxe.ds.StringMap;
 import ds.DiceSet;
 
 class C {
+  public static var levelNames: Array<String> = [
+    "Fortress 1",
+    "Fortress 2",
+    "Fortress 3",
+    "Fortress 4",
+    "Mines 1",
+    "Mines 2",
+    "Mines 3",
+    "Mines 4"
+  ];
+
   public static var tiles: StringMap<TileData> = new StringMap<TileData>();
   public static var actors: StringMap<ActorData> = new StringMap<ActorData>();
   public static var items: StringMap<ItemData> = new StringMap<ItemData>();

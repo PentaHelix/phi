@@ -10,6 +10,7 @@ using Lambda;
 interface Rule<T:{}> {
   public function tick (): Void;
   public function match (e: Entity): Void;
+  public function onWarp (u: Universe): Void;
   public function onMatched (t: T, e: Entity): Void;
   public function onUnmatched (t: T, e: Entity): Void;
 
@@ -50,18 +51,21 @@ class Rule {
     });
 
     var hasConstructor = false;
+    var hasOnWarp = false;
     var hasOnMatched = false;
     var hasOnUnmatched = false;
     var hasTick = false;
 
     for (field in fields) {
       if (field.name == 'new') hasConstructor = true;
+      if (field.name == 'onWarp') hasOnWarp = true;
       if (field.name == 'onMatched') hasOnMatched = true;
       if (field.name == 'onUnmatched') hasOnUnmatched = true;
       if (field.name == 'tick') hasTick = true;
     }
 
     if (!hasConstructor) fields.push(constructor());
+    if (!hasOnWarp) fields.push(onWarp());
     if (!hasOnMatched) fields.push(onMatched(ct));
     if (!hasOnUnmatched) fields.push(onUnmatched(ct));
     if (!hasTick) fields.push(tick());
@@ -72,7 +76,7 @@ class Rule {
     return fields;
   }
 
-  private static function constructor(): Field {
+  private static function constructor (): Field {
     return {
       name: 'new',
       kind: FFun({
@@ -85,7 +89,25 @@ class Rule {
     };
   }
 
-  private static function onMatched(ct: ComplexType): Field {
+  private static function onWarp (): Field {
+    return {
+      name: 'onWarp',
+      kind: FFun({
+        args: [
+          {
+            name: 'u',
+            type: macro : phi.Universe
+          }
+        ],
+        ret: macro : Void,
+        expr: macro {}
+      }),
+      pos: Context.currentPos(),
+      access: [APublic]
+    };
+  }
+
+  private static function onMatched (ct: ComplexType): Field {
     return {
       name: 'onMatched',
       kind: FFun({
@@ -107,7 +129,7 @@ class Rule {
     };
   }
 
-  private static function onUnmatched(ct: ComplexType): Field {
+  private static function onUnmatched (ct: ComplexType): Field {
     return {
       name: 'onUnmatched',
       kind: FFun({
@@ -129,7 +151,7 @@ class Rule {
     };
   }
 
-  private static function tick(): Field {
+  private static function tick (): Field {
     return {
       name: 'tick',
       kind: FFun({
@@ -166,7 +188,7 @@ class Rule {
         default: 
       }
     }
-
+ 
     var objDecl:Expr = {
       expr: EObjectDecl(objFields),
       pos: Context.currentPos()
@@ -263,8 +285,10 @@ class Rule {
           sub: null
         }),
         expr: macro {
-          entities.remove(entity);
-          onUnmatched(entities.get(entity), entity);
+          if (entities.exists(entity)) {
+            onUnmatched(entities.get(entity), entity);
+            entities.remove(entity);
+          }
         },
         params: null
       })

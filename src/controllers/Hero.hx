@@ -1,5 +1,7 @@
 package controllers;
 
+import actions.Action;
+import actions.InteractAction;
 import rules.HexActorRule.Actor;
 import hxd.Key;
 import actions.WalkAction;
@@ -19,12 +21,22 @@ class Hero implements Controller {
 
   public function new () {}
 
-  public function getAction () {
+  public function getAction (): Action {
+
+    // movement 
     for (k in 0...6) {
       if (Key.isPressed(keyMap[k])) {
         return new WalkAction(self, k);
       }
     }
+
+    var structure = Manager.inst.map.at(self.transform.pos).structure;
+    if (structure != null) {
+      if (Key.isPressed(Key.R)) {
+        return new InteractAction(self, structure);
+      }
+    }
+
     return null;
   }
 }

@@ -1,13 +1,13 @@
 package phi;
 
+import h2d.Scene;
+
 class Universe {
-  private var passes:Array<Pass> = [];
-  private var entities:Array<Entity> = [];
+  public var s2d: Scene;
+  public var entities:Array<Entity> = [];
 
-  public function new () {}
-
-  public function addPass (p: Pass) {
-    passes.push(p);
+  public function new (s2d: Scene) {
+    this.s2d = s2d;
   }
 
   public function addEntity (e: Entity) {
@@ -16,20 +16,5 @@ class Universe {
 
   public function removeEntity (e: Entity) {
     entities.remove(e);
-    for (pass in passes) {
-      pass.removeEntity(e);
-    }
-  }
-
-  public function tick () {
-    for (pass in passes) {
-      pass.tick();
-    }
-  }
-
-  public function match (e: Entity) {
-    for (pass in passes) {
-      pass.match(e);
-    }
   }
 }

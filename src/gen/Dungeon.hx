@@ -1,8 +1,14 @@
 package gen;
 
+import traits.HexStructure;
+import traits.HexActor;
+import traits.HexTransform;
+import phi.Entity;
+import phi.Universe;
 import HexMap.PathNode;
 import ds.PriorityQueue;
 import ds.VecMap;
+import structureTypes.Door;
 
 using Hex;
 using Utils;
@@ -11,6 +17,110 @@ using Lambda;
 class Dungeon {
   public static inline var ROOM_MIN_SIZE = 8;
   public static inline var ROOM_MAX_SIZE = 20;
+
+  public static function make (u: Universe, map: HexMap): HexMap {
+    var possibleCorridors = [
+      {r1: 6, r2: 0}, {r1: 6, r2: 1}, 
+      {r1: 6, r2: 2}, {r1: 6, r2: 3},
+      {r1: 6, r2: 4}, {r1: 6, r2: 5},
+      
+      {r1: 0, r2: 1}, {r1: 1, r2: 2}, 
+      {r1: 2, r2: 3}, {r1: 3, r2: 4},
+      {r1: 4, r2: 5}, {r1: 5, r2: 0},
+    ];
+
+    var connected: Array<Int> = [6];
+    var corridors = [];
+
+    while(connected.length != 7) {
+      var corr = possibleCorridors.filter(c -> corridors.indexOf(c) == -1).random();
+      if (connected.indexOf(corr.r1) == -1) connected.push(corr.r1);
+      else if (connected.indexOf(corr.r2) == -1) connected.push(corr.r2); 
+      corridors.push(corr);
+    }
+    
+    var possibleDoorways: Array<HexVec> = [];
+    var rooms: Array<HexVec> = [];
+
+    var freeSpace: PriorityQueue<HexVec> = new PriorityQueue<HexVec>();
+
+    for (s in HexVec.offsets.concat([HexVec.ZERO])) {
+      var room = gen.Dungeon.room().map(p -> p + s*13);
+      map.fill(room, "floor_rocks");
+      var outline = room.outline();
+      
+      var i = 0;
+      for (space in room.shuffle()) {
+        freeSpace.enqueue(space, i);
+        i++;
+      }
+
+      rooms = rooms.concat(room).concat(outline);
+      
+      for (i in 0...6) {
+        var idx: Int = Math.floor(outline.length*i/6);
+        possibleDoorways.push(outline[idx]);
+      }
+      map.set(room.outline(), "wall_bricks");
+    }
+
+    var maze = gen.Dungeon.maze(possibleDoorways, rooms, 18);
+    var doorways: Array<HexVec> = [];
+
+    for (c in corridors) {
+      var d1 = c.r1*6;
+      var d2 = c.r2*6;
+      var o1 = (c.r2 - (c.r1 - c.r2)) % 6;
+      var o2 = (c.r1 - (c.r2 - c.r1)) % 6;
+      if (c.r1 == 6) {
+        o1 = c.r2;
+        o2 = (-o2+3)%6;
+      }
+
+      if (o1 < 0) o1 += 6;
+      if (o2 < 0) o2 += 6;
+      d1 += o1;
+      d2 += o2;
+      var corridor = gen.Dungeon.corridor(rooms, maze, possibleDoorways[d1], possibleDoorways[d2]);
+      doorways.push(possibleDoorways[d1]);
+      doorways.push(possibleDoorways[d2]);
+      map.set(corridor, "floor_planks");
+    }
+
+    map.set(doorways, "wall_bricks");
+
+    map.createTiles(u);
+
+    for (d in doorways) {
+      new Entity([
+        new HexTransform(d),
+        new HexStructure("door", new Door())
+      ], u);
+    }
+
+    new Entity([
+      new HexTransform(freeSpace.dequeue()),
+      new HexStructure("ladder_down", new structureTypes.LadderDown())
+    ], u);
+
+    new Entity([
+      new HexTransform(freeSpace.dequeue()),
+      new HexStructure("ladder_up", new structureTypes.LadderUp())
+    ], u);
+
+    new Entity([
+      new HexTransform(HexVec.ZERO),
+      new HexActor("hero", new controllers.Hero()),
+      new traits.Hero()
+    ], u);
+
+    new Entity([
+      new HexTransform(HexVec.offsets[0] * 2),
+      new HexActor("rat", new controllers.Hostile())
+    ], u);
+
+    return map;
+  }
 
   public static function room (): Array<HexVec> {
     var hexes = [HexVec.ZERO];

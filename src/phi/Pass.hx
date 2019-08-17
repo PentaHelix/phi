@@ -25,4 +25,10 @@ class Pass {
       rule.removeEntity(e);
     }
   }
+
+  public function onWarp (u: Universe) {
+    for (r in rules) {
+      r.onWarp(u);
+    }
+  }
 }

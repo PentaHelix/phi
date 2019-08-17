@@ -14,24 +14,26 @@ class WalkAction implements Action {
 
   public function perform () {
     var move = HexVec.offsets[direction];
-    if (Manager.map.at(self.transform.pos + move).tile == null) return false;
+    var map = Manager.inst.map;
+    
+    if (map.at(self.transform.pos + move).tile == null) return false;
 
-    if (!Manager.map.at(self.transform.pos + move).tile.passable) {
-      if (Manager.map.at(self.transform.pos + move).structure != null) {
-        var interaction = new InteractAction(self, Manager.map.at(self.transform.pos + move).structure);
+    if (!map.at(self.transform.pos + move).tile.passable) {
+      if (map.at(self.transform.pos + move).structure != null) {
+        var interaction = new InteractAction(self, map.at(self.transform.pos + move).structure);
         return interaction.perform();
       } else {
         return false;
       }
     }
-    if (Manager.map.at(self.transform.pos + move).actor != null) {
-      var attack = new AttackAction(self, Manager.map.at(self.transform.pos + move).actor);
+    if (map.at(self.transform.pos + move).actor != null) {
+      var attack = new AttackAction(self, map.at(self.transform.pos + move).actor);
       return attack.perform();
     }
     
-    Manager.map.at(self.transform.pos).actor = null;
+    map.at(self.transform.pos).actor = null;
     self.transform.pos += move;
-    Manager.map.at(self.transform.pos).actor = self;
+    map.at(self.transform.pos).actor = self;
     
     self.actor.facing = direction;
     return true;
