@@ -1,6 +1,5 @@
 package;
 
-import phi.Game;
 import h3d.Vector;
 import rules.HexActorRule.Actor;
 import ds.VecMap;
@@ -58,7 +57,7 @@ class HexMap {
     if(p1 == p2) return [];
 
     var explored: VecMap<PathNode> = new VecMap<PathNode>();
-    var queue:PriorityQueue<PathNode> = new PriorityQueue<PathNode>();
+    var queue: PriorityQueue<PathNode> = new PriorityQueue<PathNode>();
     var dist = Hex.distance(p1, p2);
 
     queue.enqueue({
@@ -125,7 +124,7 @@ class HexMap {
     var dist = Hex.distance(p1, p2);
     if (maxLength > 0 && dist >= maxLength) return false;
     var lerp = (a: Float, b: Float, t: Float) -> a + (b - a) * t;
-    for (i in 0...dist) {
+    for (i in 1...dist) {
       var t = i / dist;
       var h = Hex.round(lerp(p1.x, p2.x, t), lerp(p1.y, p2.y, t), lerp(p1.z, p2.z, t));
       if (at(h).tile == null || at(h).tile.castShadow) return false;

@@ -16,12 +16,12 @@ typedef Tiles = {
 }
 
 class HexMapRule implements Rule<Tiles> {
-  var group: TileGroup;
+  var tileGroup: TileGroup;
   var tiles: Array<Tile> = [];
 
   public function new () {
     var tileMap = Res.load("tiles.png").toTile();
-    group = new TileGroup(tileMap, null);
+    tileGroup = new TileGroup(tileMap, null);
 
     tiles = [
 			 for(x in 0 ... C.TILE_COUNT)
@@ -31,7 +31,7 @@ class HexMapRule implements Rule<Tiles> {
   }
 
   public function onWarp (u: Universe) {
-    u.s2d.addChildAt(group, 0);
+    u.root.add(tileGroup, 0);
   }
 
   public function onMatched (t: Tiles, e: Entity) {
@@ -39,7 +39,7 @@ class HexMapRule implements Rule<Tiles> {
   }
 
   public function onUnmatched (e: Tiles, e: Entity) {
-    group.clear();
+    tileGroup.clear();
     for (t in entities) {
       makeTile(t);
     }
@@ -47,6 +47,6 @@ class HexMapRule implements Rule<Tiles> {
 
   private function makeTile (t:Tiles) {
     var pos = t.transform.pos.toPixel();
-    group.add(pos.x, pos.y, tiles[t.tile.tileId]);
+    tileGroup.add(pos.x, pos.y, tiles[t.tile.tileId]);
   }
 }

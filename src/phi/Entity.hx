@@ -1,8 +1,5 @@
 package phi;
 
-import haxe.CallStack;
-import haxe.ds.IntMap;
-
 abstract Entity(Int) to Int from Int {
   private static var entity_count = 0;
   public function new (t: Array<Trait>, u: Universe) {

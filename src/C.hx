@@ -70,6 +70,7 @@ typedef ActorData = {
   var speed: Int;
   var baseAttack: DiceSet;
   var strength: Int;
+  var perception: Int;
 }
 
 typedef ItemData = {

@@ -1,7 +1,10 @@
 package rules;
 
+import phi.Universe;
+import h2d.TileGroup;
 import phi.Game;
-import h2d.Scene;
+import ds.VecMap;
+import haxe.ds.IntMap;
 import hxd.Res;
 import h2d.Bitmap;
 import h2d.Tile;
@@ -22,36 +25,55 @@ class HexActorRule implements Rule<Actor> {
   var current: Int = 0;
   var order: Array<Entity> = new Array<Entity>();
 
+  var fog: Tile;
+  var fogGroup: TileGroup;
+  var mapKnowledge: IntMap<VecMap<Bool>>;
+
   public function new () {
     actors = Res.load("actors.png")
       .toTile()
       .grid(16)
       .map(arr -> arr.map(s -> s.center()));
+    
+    mapKnowledge = new IntMap<VecMap<Bool>>();
+    fogGroup = new TileGroup(Res.load("fog.png").toTile(), null);
+    fog = Res.load("fog.png").toTile().center();
   }
+
+  var didFog: Bool = false;
+  var waiting: Bool = true;
 
   public function tick () {
     if (order.length == 0) return;
-    current %= order.length;
+    // current %= order.length;
     var actor = entities.get(order[current]).actor;
     
+    if (waiting && !didFog) {
+      revealMap();
+      setFog();
+      didFog = true;
+    }
+
     if (actor.energy + actor.speed >= 100) {
       var action = actor.controller.getAction();
+      waiting = action == null;
       if (action != null) {
+        didFog = false;
         var success = action.perform();
         if (success) {
           actor.energy -= 100 - actor.speed;
-          current++;
+          revealMap();
+          current = (current + 1) % order.length;
         }
       }
     } else {
       actor.energy += actor.speed;
-      current++;
+      current = (current + 1) % order.length;
     }
 
     for (a in entities) {
       var pos = a.transform.pos.toPixel();
-      // TODO: animate actor movement to be smoother
-      // a.sprite.setPosition(pos.x, pos.y - 5);
+      // TODO: remove this animation system with more controllable tweens
       a.sprite.x += (pos.x - a.sprite.x) * 0.15;
       a.sprite.y += (pos.y - 5 - a.sprite.y) * 0.15;
       
@@ -71,15 +93,22 @@ class HexActorRule implements Rule<Actor> {
   public function onMatched (a: Actor, e: Entity) {
     Manager.inst.map.at(a.transform.pos).actor = a;
     a.sprite = new Bitmap(actors[a.actor.actorId][0]);
-    Game.universe.s2d.addChildAt(a.sprite, 1);
+    Game.universe.root.add(a.sprite, 1);
     a.actor.controller.self = a;
     order.push(e);
+    if (mapKnowledge.get(e) == null) {
+      mapKnowledge.set(e, new VecMap<Bool>());
+    }
   }
 
   public function onUnmatched (a: Actor, e: Entity) {
     trace(e);
     order.remove(e);
     a.sprite.remove();
+  }
+
+  public function onWarp (u: Universe) {
+    u.root.add(fogGroup, 10);
   }
 
   public function getNearestNonHostile (pos: HexVec): Actor {
@@ -95,5 +124,35 @@ class HexActorRule implements Rule<Actor> {
     }
     
     return nearest;
+  }
+
+  var visible: VecMap<Bool>;
+  private function revealMap () {
+    visible = new VecMap<Bool>();
+    var e = entities.get(order[current]);
+    var actor = e.actor;
+    var transform = e.transform;
+    for (hex in Hex.range(actor.perception)) {
+      if (Manager.inst.map.isVisibleFrom(transform.pos, transform.pos + hex)) {
+        mapKnowledge.get(order[current])[transform.pos + hex] = true;
+        visible[transform.pos + hex] = true;
+      }
+    }
+  }
+
+  private function setFog () {
+    fogGroup.clear();
+    for (hex in Hex.range(Manager.inst.map.radius)) {
+      var actor = Manager.inst.map.at(hex).actor;
+      if (actor != null) actor.sprite.visible = true;
+      if (mapKnowledge.get(order[current])[hex] == true && visible[hex] == true) continue;
+      if (actor != null) actor.sprite.visible = false;
+      var p = hex.toPixel();
+      if (mapKnowledge.get(order[current])[hex] == true) {
+        fogGroup.addAlpha(p.x, p.y, 0.5, fog);
+      } else {
+        fogGroup.add(p.x, p.y, fog);
+      }
+    }
   }
 }

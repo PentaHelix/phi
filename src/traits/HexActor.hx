@@ -18,6 +18,7 @@ class HexActor implements Trait {
 
   public var speed: Int;
   public var strength: Int;
+  public var perception: Int;
 
   public var controller: Controller;
 
@@ -28,6 +29,7 @@ class HexActor implements Trait {
     this.speed = data.speed;
     this.baseAttack = data.baseAttack;
     this.strength = data.strength;
+    this.perception = data.perception;
     this.controller = controller;
   }
 }

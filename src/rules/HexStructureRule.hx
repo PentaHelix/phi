@@ -35,7 +35,7 @@ class HexStructureRule implements Rule<Structure> {
 
     var pos = s.transform.pos.toPixel();
     s.bitmap = new Bitmap(tiles[s.structure.structureId][0]);
-    Game.universe.s2d.addChildAt(s.bitmap, 1);
+    Game.universe.root.add(s.bitmap, 1);
     s.bitmap.setPosition(pos.x, pos.y);
   }
 }

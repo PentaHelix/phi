@@ -1,4 +1,4 @@
- package;
+package;
 
 import h2d.Scene;
 import haxe.ds.StringMap;
@@ -17,8 +17,6 @@ class Manager extends phi.Game {
   public var actors: HexActorRule;
   public var levels: StringMap<{u: Universe, m: HexMap}> = new StringMap<{u: Universe, m: HexMap}>();
   public var currentLevel: Int;
-
-  var universe: Universe;
 
 
   public static function main() {
@@ -64,13 +62,9 @@ class Manager extends phi.Game {
     
     if (needsInit) {
       gen.Dungeon.make(u, m);
+      trace(m);
     }
-  } 
-
-  var hero: HexTransform;
-  var rat: HexTransform;
-
-  var hexes: Array<HexVec> = [HexVec.ZERO];
+  }
 
   override public function tick () {
     super.tick();

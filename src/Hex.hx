@@ -48,6 +48,19 @@ class Hex {
     return result;
   }
 
+  public static function range (size: Int): Array<HexVec> {
+    var result: Array<HexVec> = [];
+    for (x in -size...size+1) {
+      for (y in -size...size+1) {
+        for (z in -size...size+1) {
+          if (x + y + z == 0) result.push(new HexVec(x,y,z));
+        }
+      }  
+    }
+
+    return result;
+  }
+
   public static function smoothen (hexes: IntMap<Bool>, exceptions: Array<HexVec>): IntMap<Bool> {
     var removed;
     do {
