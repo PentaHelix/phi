@@ -30,6 +30,7 @@ class WalkAction implements Action {
         return false;
       }
     }
+
     if (map.at(self.transform.pos + move).actor != null) {
       var attack = new AttackAction(self, map.at(self.transform.pos + move).actor);
       return attack.perform();
@@ -40,23 +41,15 @@ class WalkAction implements Action {
     map.at(self.transform.pos).actor = self;
     
 
-    // TODO: should all this sprite logic be here in WalkAction?
     self.actor.facing = direction;
-    self.sprite.tile = HexActorRule.actors[self.actor.actorId][spriteFacing[self.actor.facing]];
 
     var p = self.transform.pos.toPixel();
 
     Actuate.tween(self.sprite, 0.2, {x: p.x, y: p.y - 5}).onUpdate(() -> {
+      // TODO: find better alternative for screenPos
       self.transform.screenPos.x = self.sprite.x;
       self.transform.screenPos.y = self.sprite.y;
     }).ease(Quad.easeOut);
-
     return true;
   }
-  private static var spriteFacing = [
-    0,
-    1,1,
-    2,
-    3,3
-  ];
 }

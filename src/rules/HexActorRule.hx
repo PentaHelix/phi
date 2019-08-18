@@ -1,5 +1,6 @@
 package rules;
 
+import motion.Actuate;
 import phi.Universe;
 import h2d.TileGroup;
 import phi.Game;
@@ -47,6 +48,7 @@ class HexActorRule implements Rule<Actor> {
     if (order.length == 0) return;
     // current %= order.length;
     var actor = entities.get(order[current]).actor;
+    var sprite = entities.get(order[current]).sprite;
     
     if (waiting && !didFog) {
       revealMap();
@@ -63,6 +65,7 @@ class HexActorRule implements Rule<Actor> {
         if (success) {
           actor.energy -= 100 - actor.speed;
           revealMap();
+          sprite.tile = actors[actor.actorId][spriteFacing[actor.facing]];
           current = (current + 1) % order.length;
         }
       }
@@ -126,9 +129,11 @@ class HexActorRule implements Rule<Actor> {
     fogGroup.clear();
     for (hex in Hex.range(Manager.inst.map.radius)) {
       var actor = Manager.inst.map.at(hex).actor;
-      if (actor != null) actor.sprite.visible = true;
-      if (mapKnowledge.get(order[current])[hex] == true && visible[hex] == true) continue;
-      if (actor != null) actor.sprite.visible = false;
+      if (mapKnowledge.get(order[current])[hex] == true && visible[hex] == true) {
+        if (actor != null) Actuate.tween(actor.sprite, 0.3, {alpha: 1});
+        continue;
+      }
+      if (actor != null) Actuate.tween(actor.sprite, 0.3, {alpha: 0});
       var p = hex.toPixel();
       if (mapKnowledge.get(order[current])[hex] == true) {
         fogGroup.addAlpha(p.x, p.y, 0.5, fog);
@@ -137,4 +142,11 @@ class HexActorRule implements Rule<Actor> {
       }
     }
   }
+
+  private static var spriteFacing = [
+    0,
+    1,1,
+    2,
+    3,3
+  ];
 }
