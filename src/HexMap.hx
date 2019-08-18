@@ -133,15 +133,19 @@ class HexMap {
       var h1 = null;
       var h2 = null;
 
-      if (Math.abs(dx % 1 - 0.5) < 0.01) {
-        h1 = Hex.round(dx+0.5, dy, dz);
-        h2 = Hex.round(dx-0.5, dy, dz);
-      } else if (Math.abs(dy % 1 - 0.5) < 0.01) {
-        h1 = Hex.round(dx, dy+0.5, dz);
-        h2 = Hex.round(dx, dy-0.5, dz);
-      } else if (Math.abs(dz % 1 - 0.5) < 0.01) {
-        h1 = Hex.round(dx, dy, dz+0.5);
-        h2 = Hex.round(dx, dy, dz-0.5);
+      var xErr = Math.abs(Math.abs(dx % 1) - 0.5) < 0.01;
+      var yErr = Math.abs(Math.abs(dy % 1) - 0.5) < 0.01;
+      var zErr = Math.abs(Math.abs(dz % 1) - 0.5) < 0.01;
+
+      if (xErr && yErr) {
+        h1 = Hex.round(dx+0.5, dy-0.5, dz);
+        h2 = Hex.round(dx-0.5, dy+0.5, dz);
+      } else if (yErr && zErr) {
+        h1 = Hex.round(dx, dy+0.5, dz-0.5);
+        h2 = Hex.round(dx, dy-0.5, dz+0.5);
+      } else if (xErr && zErr) {
+        h1 = Hex.round(dx-0.5, dy, dz+0.5);
+        h2 = Hex.round(dx+0.5, dy, dz-0.5);
       } else {
         h1 = Hex.round(dx, dy, dz);
       }
@@ -151,7 +155,7 @@ class HexMap {
     }
     return true;
   }
-
+ 
   public function createTiles (u: Universe) {
     for (h => d in data) {
       if (d.tile == null) continue;

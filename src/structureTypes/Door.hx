@@ -12,6 +12,6 @@ class Door extends StructureType {
     trace('interacted with door');
     structure.setState("open");
     tile.passable = true;
-    tile.castsShadow = true;
+    tile.castsShadow = false;
   }
 }

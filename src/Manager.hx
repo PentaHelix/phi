@@ -21,6 +21,7 @@ class Manager extends phi.Game {
 
   public static function main() {
     hxd.Res.initEmbed();
+    trace(-1.5 % 1);
     C.init();
     inst = new Manager();
   }
