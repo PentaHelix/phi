@@ -1,5 +1,7 @@
 package;
 
+import motion.actuators.SimpleActuator;
+import motion.Actuate;
 import h2d.Scene;
 import haxe.ds.StringMap;
 import h3d.Engine;
@@ -69,6 +71,7 @@ class Manager extends phi.Game {
 
   override public function tick () {
     super.tick();
+    SimpleActuator.stage_onEnterFrame();
   }
 
   override public function render (e: Engine) {

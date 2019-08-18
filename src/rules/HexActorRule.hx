@@ -21,7 +21,7 @@ typedef Actor = {
 }
 
 class HexActorRule implements Rule<Actor> {
-  var actors: Array<Array<Tile>>;
+  public static var actors: Array<Array<Tile>>;
   var current: Int = 0;
   var order: Array<Entity> = new Array<Entity>();
 
@@ -70,25 +70,7 @@ class HexActorRule implements Rule<Actor> {
       actor.energy += actor.speed;
       current = (current + 1) % order.length;
     }
-
-    for (a in entities) {
-      var pos = a.transform.pos.toPixel();
-      // TODO: remove this animation system with more controllable tweens
-      a.sprite.x += (pos.x - a.sprite.x) * 0.15;
-      a.sprite.y += (pos.y - 5 - a.sprite.y) * 0.15;
-      
-      a.transform.screenPos.x = a.sprite.x;
-      a.transform.screenPos.y = a.sprite.y;
-      a.sprite.tile = actors[a.actor.actorId][spriteFacing[a.actor.facing]];
-    }
   }
-
-  private static var spriteFacing = [
-    0,
-    1,1,
-    2,
-    3,3
-  ];
 
   public function onMatched (a: Actor, e: Entity) {
     Manager.inst.map.at(a.transform.pos).actor = a;

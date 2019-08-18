@@ -1,5 +1,9 @@
 package actions;
 
+import motion.easing.Expo;
+import motion.easing.Quad;
+import rules.HexActorRule;
+import motion.Actuate;
 import rules.HexActorRule.Actor;
 
 class WalkAction implements Action {
@@ -35,7 +39,24 @@ class WalkAction implements Action {
     self.transform.pos += move;
     map.at(self.transform.pos).actor = self;
     
+
+    // TODO: should all this sprite logic be here in WalkAction?
     self.actor.facing = direction;
+    self.sprite.tile = HexActorRule.actors[self.actor.actorId][spriteFacing[self.actor.facing]];
+
+    var p = self.transform.pos.toPixel();
+
+    Actuate.tween(self.sprite, 0.2, {x: p.x, y: p.y - 5}).onUpdate(() -> {
+      self.transform.screenPos.x = self.sprite.x;
+      self.transform.screenPos.y = self.sprite.y;
+    }).ease(Quad.easeOut);
+
     return true;
   }
+  private static var spriteFacing = [
+    0,
+    1,1,
+    2,
+    3,3
+  ];
 }
