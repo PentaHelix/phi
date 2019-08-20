@@ -1,5 +1,6 @@
 package rules;
 
+import h2d.Object;
 import motion.Actuate;
 import phi.Universe;
 import h2d.TileGroup;
@@ -26,8 +27,8 @@ class HexActorRule implements Rule<Actor> {
   var current: Int = 0;
   var order: Array<Entity> = new Array<Entity>();
 
-  var fog: Tile;
-  var fogGroup: TileGroup;
+  var fog: Object;
+  var fogGroup: VecMap<Bitmap>;
   var mapKnowledge: IntMap<VecMap<Bool>>;
 
   public function new () {
@@ -37,8 +38,14 @@ class HexActorRule implements Rule<Actor> {
       .map(arr -> arr.map(s -> s.center()));
     
     mapKnowledge = new IntMap<VecMap<Bool>>();
-    fogGroup = new TileGroup(Res.load("fog.png").toTile(), null);
-    fog = Res.load("fog.png").toTile().center();
+    fog = new Object();
+    var tile = Res.load("fog.png").toTile().center();
+    fogGroup = new VecMap<Bitmap>();
+    for (h in Hex.range(20)) {
+      fogGroup[h] = new Bitmap(tile, fog);
+      fogGroup[h].setPosition(h.toPixel().x, h.toPixel().y);
+      fogGroup[h].alpha = 0;
+    }
   }
 
   var didFog: Bool = false;
@@ -51,8 +58,8 @@ class HexActorRule implements Rule<Actor> {
     var sprite = entities.get(order[current]).sprite;
     
     if (waiting && !didFog) {
-      revealMap();
-      setFog();
+      revealMap(true);
+      // setFog();
       didFog = true;
     }
 
@@ -93,7 +100,7 @@ class HexActorRule implements Rule<Actor> {
   }
 
   public function onWarp (u: Universe) {
-    u.root.add(fogGroup, 10);
+    u.root.add(fog, 10);
   }
 
   public function getNearestNonHostile (pos: HexVec): Actor {
@@ -111,34 +118,28 @@ class HexActorRule implements Rule<Actor> {
     return nearest;
   }
 
-  var visible: VecMap<Bool>;
-  private function revealMap () {
-    visible = new VecMap<Bool>();
+  private function revealMap (?draw=false) {
     var e = entities.get(order[current]);
     var actor = e.actor;
     var transform = e.transform;
+
+    if (draw) {
+      for (hex in Hex.range(20)) {
+        if (mapKnowledge.get(order[current])[hex] == true) {
+          Actuate.tween(fogGroup[hex], 0.2, {alpha: 0.5});
+        } else {
+          Actuate.tween(fogGroup[hex], 0.2, {alpha: 1});
+        }
+      }
+    }
+    
     for (hex in Hex.range(actor.perception)) {
       if (Manager.inst.map.isVisibleFrom(transform.pos, transform.pos + hex)) {
         mapKnowledge.get(order[current])[transform.pos + hex] = true;
-        visible[transform.pos + hex] = true;
-      }
-    }
-  }
+        if (draw) Actuate.tween(fogGroup[transform.pos + hex], 0.2, {alpha: 0}, true);
 
-  private function setFog () {
-    fogGroup.clear();
-    for (hex in Hex.range(Manager.inst.map.radius)) {
-      var actor = Manager.inst.map.at(hex).actor;
-      if (mapKnowledge.get(order[current])[hex] == true && visible[hex] == true) {
-        if (actor != null) Actuate.tween(actor.sprite, 0.3, {alpha: 1});
-        continue;
-      }
-      if (actor != null) Actuate.tween(actor.sprite, 0.3, {alpha: 0});
-      var p = hex.toPixel();
-      if (mapKnowledge.get(order[current])[hex] == true) {
-        fogGroup.addAlpha(p.x, p.y, 0.5, fog);
-      } else {
-        fogGroup.add(p.x, p.y, fog);
+        var actor = Manager.inst.map.at(hex).actor;
+        if (actor != null && draw) Actuate.tween(actor.sprite, 0.3, {alpha: 1});
       }
     }
   }

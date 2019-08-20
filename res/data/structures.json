@@ -14,5 +14,29 @@
       "closed",
       "open"
     ]
+  },
+  {
+    "id": 3,
+    "name": "table"
+  },
+  {
+    "id": 4,
+    "name": "chair"
+  },
+  {
+    "id": 5,
+    "name": "bed"
+  },
+  {
+    "id": 6,
+    "name": "keg"
+  },
+  {
+    "id": 7,
+    "name": "anvil"
+  },
+  {
+    "id": 8,
+    "name": "bookcase"
   }
 ]

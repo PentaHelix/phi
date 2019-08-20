@@ -19,6 +19,8 @@ class C {
   public static var actors: StringMap<ActorData> = new StringMap<ActorData>();
   public static var items: StringMap<ItemData> = new StringMap<ItemData>();
   public static var structures: StringMap<StructureData> = new StringMap<StructureData>();
+  public static var levels: StringMap<LevelData> = new StringMap<LevelData>();
+  public static var roomTypes: StringMap<RoomTypeData> = new StringMap<RoomTypeData>();
 
   public static var TILE_COUNT:Int;
   public static var ACTOR_COUNT:Int;
@@ -53,6 +55,16 @@ class C {
       }
       structures.set(structureData[i].name, structureData[i]);
     }
+
+    var levelData:Array<LevelData> = haxe.Json.parse(hxd.Res.load('data/levels.json').entry.getText());
+    for (i in 0...levelData.length) {
+      levels.set(levelData[i].name, levelData[i]);
+    }
+
+    var roomTypeData:Array<RoomTypeData> = haxe.Json.parse(hxd.Res.load('data/rooms.json').entry.getText());
+    for (i in 0...roomTypeData.length) {
+      roomTypes.set(roomTypeData[i].name, roomTypeData[i]);
+    }
   }
 }
 
@@ -83,4 +95,37 @@ typedef StructureData = {
   var id: Int;
   var name: String;
   var states: Array<String>;
+}
+
+typedef LevelData = {
+  var id: Int;
+  var name: String;
+  var generator: String;
+  var rooms: Array<LevelRoomData>;
+  var structures: Array<LevelStructureData>;
+}
+
+typedef LevelRoomData = {
+  var name: String;
+  var chance: Float;
+}
+
+typedef LevelStructureData = {
+  var name: String;
+  var data: Dynamic;
+  var chance: Float;
+  var amount: String;
+}
+
+typedef RoomTypeData = {
+  var id: Int;
+  var name: String;
+  var floor: String;
+  var walls: String;
+  var structures: Array<RoomStructureData>;
+}
+
+typedef RoomStructureData = {
+  var name: String;
+  var amount: String;
 }

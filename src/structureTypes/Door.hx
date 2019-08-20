@@ -1,5 +1,6 @@
 package structureTypes;
 
+import hl.Profile;
 import rules.HexActorRule.Actor;
 
 class Door extends StructureType {
@@ -9,7 +10,6 @@ class Door extends StructureType {
   }
   
   override public function onInteract(a: Actor) {
-    trace('interacted with door');
     structure.setState("open");
     tile.passable = true;
     tile.castsShadow = false;

@@ -1,0 +1,14 @@
+[
+  {
+    "id": 0,
+    "name": "Library",
+    "floor": "",
+    "walls": "",
+    "structures": [
+      {
+        "name": "bookcase",
+        "amount": "1d3+2"
+      }
+    ]
+  }
+]

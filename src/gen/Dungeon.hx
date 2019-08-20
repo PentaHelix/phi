@@ -1,5 +1,8 @@
 package gen;
 
+import structureTypes.Furniture;
+import structureTypes.LadderDown;
+import structureTypes.LadderUp;
 import traits.HexStructure;
 import traits.HexActor;
 import traits.HexTransform;
@@ -9,6 +12,7 @@ import HexMap.PathNode;
 import ds.PriorityQueue;
 import ds.VecMap;
 import structureTypes.Door;
+import util.Random;
 
 using Hex;
 using Utils;
@@ -91,33 +95,16 @@ class Dungeon {
 
     map.createTiles(u);
 
-    for (d in doorways) {
-      new Entity([
-        new HexTransform(d),
-        new HexStructure("door", new Door())
-      ], u);
-    }
+    for (d in doorways) Builder.structure(d, "door", new Door());
 
-    new Entity([
-      new HexTransform(freeSpace.dequeue()),
-      new HexStructure("ladder_down", new structureTypes.LadderDown())
-    ], u);
+    Builder.structure(freeSpace.dequeue(), "ladder_down", new LadderDown());
+    Builder.structure(freeSpace.dequeue(), "ladder_up", new LadderUp());
 
-    new Entity([
-      new HexTransform(freeSpace.dequeue()),
-      new HexStructure("ladder_up", new structureTypes.LadderUp())
-    ], u);
+    for (_ in 0...Random.range(3, 6)) Builder.structure(freeSpace.dequeue(), "table", new Furniture());
+    for (_ in 0...Random.range(12, 21)) Builder.structure(freeSpace.dequeue(), "chair", new Furniture());
 
-    new Entity([
-      new HexTransform(HexVec.ZERO),
-      new HexActor("hero", new controllers.Hero()),
-      new traits.Hero()
-    ], u);
-
-    new Entity([
-      new HexTransform(HexVec.offsets[0] * 2),
-      new HexActor("rat", new controllers.Hostile())
-    ], u);
+    Builder.hero(HexVec.ZERO);
+    Builder.actor(HexVec.offsets[0] * 2, "rat", new controllers.Hostile());
 
     return map;
   }

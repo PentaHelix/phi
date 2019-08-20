@@ -1,5 +1,6 @@
 package actions;
 
+import ui.Log;
 import items.Item;
 import rules.HexActorRule.Actor;
 
@@ -24,10 +25,14 @@ class AttackAction implements Action {
     } else {
       // TODO
     }
+    
     target.actor.health -= dmg;
+    Log.info('${self.actor.name} hits ${target.actor.name} for ${dmg} damage');
+    
     if (target.actor.health <= 0) {
 
     }
+
     return true;
   }
 }

@@ -12,13 +12,10 @@ typedef Hero = {
 
 class HeroRule implements Rule<Hero> {
   public function tick () {
-    var s2d = Game.universe.s2d;
     for (e in entities) {
       if (e.hero.cameraFocused) {
         var pos = e.transform.screenPos;
-        // s2d.x += ((-pos.x + s2d.width/2) - s2d.x) * 0.15;
-        // s2d.y += ((-pos.y + s2d.height/2) - s2d.y) * 0.15;
-        s2d.setPosition(-pos.x + s2d.width/2, -pos.y + s2d.height/2);
+        Game.universe.root.setPosition(-pos.x, -pos.y);
       }
     }
   }

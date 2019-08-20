@@ -2,6 +2,11 @@
 -D debug
 -D actuate_manual_update
 
+# -D HXCPP_STACK_TRACE
+# -D HXCPP_TELEMETRY
+# -lib hxtelemetry
+
+-lib domkit
 -lib actuate
 -lib heaps
 -lib hlsdl

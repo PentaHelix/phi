@@ -1,0 +1,41 @@
+[
+  {
+    "id": 0,
+    "name": "Fortress 1",
+    "generator": "dungeon",
+    "rooms": [
+      {
+        "name": "Library",
+        "chance": 1
+      }
+    ],
+    "structures": [
+      {
+        "name": "ladder_down",
+        "data": "Fortress 2"
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "name": "Fortress 2",
+    "generator": "dungeon",
+    "rooms": [
+      {
+        "name": "Library",
+        "chance": 1
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Fortress 3",
+    "generator": "dungeon",
+    "rooms": [
+      {
+        "name": "Library",
+        "chance": 1
+      }
+    ]
+  }
+]

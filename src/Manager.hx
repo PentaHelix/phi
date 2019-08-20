@@ -1,7 +1,6 @@
 package;
 
 import motion.actuators.SimpleActuator;
-import motion.Actuate;
 import h2d.Scene;
 import haxe.ds.StringMap;
 import h3d.Engine;
@@ -9,7 +8,6 @@ import phi.Universe;
 
 import rules.HexMapRule;
 import rules.HexActorRule;
-import traits.HexTransform;
 
 class Manager extends phi.Game {
   // singleton
@@ -20,10 +18,8 @@ class Manager extends phi.Game {
   public var levels: StringMap<{u: Universe, m: HexMap}> = new StringMap<{u: Universe, m: HexMap}>();
   public var currentLevel: Int;
 
-
   public static function main() {
     hxd.Res.initEmbed();
-    trace(-1.5 % 1);
     C.init();
     inst = new Manager();
   }
@@ -46,26 +42,25 @@ class Manager extends phi.Game {
 
   public function warpToLevel (name: String) {
     var needsInit = false;
-    var u: Universe = null;
-    var m: HexMap = null;
 
     if (levels.get(name) == null) {
       needsInit = true;
-      var s = new Scene();
-      s.zoom = 4;
-      s.x = 85 * 8/s.zoom;
-      s.y = 45 * 8/s.zoom;
-      u = new Universe(s);
-      m = new HexMap(20);
-      levels.set(name, {u: u, m: m});
+      var s = new scenes.LevelScene();
+
+      levels.set(name, {
+        u: new Universe(s),
+        m: new HexMap(20)
+      });
     }
+
+    var m: HexMap = levels.get(name).m;
+    var u: Universe = levels.get(name).u;
     
-    this.map = levels.get(name).m;
-    this.warpTo(levels.get(name).u);
+    this.map = m;
+    this.warpTo(u);
     
     if (needsInit) {
-      gen.Dungeon.make(u, m);
-      trace(m);
+      gen.Builder.build(name, u, m);
     }
   }
 
