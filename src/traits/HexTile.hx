@@ -1,7 +1,5 @@
 package traits;
 
-import C.TileData;
-
 class HexTile implements phi.Trait {
   public var tileId: Int;
   public var name: String;

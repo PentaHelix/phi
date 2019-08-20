@@ -19,5 +19,40 @@
     "variants": [],
     "passable": false,
     "castsShadow": true
+  },
+  {
+    "id": 3,
+    "name": "floor_marble",
+    "variants": [],
+    "passable": true,
+    "castsShadow": false
+  },
+  {
+    "id": 5,
+    "name": "wall_dirt",
+    "variants": [],
+    "passable": false,
+    "castsShadow": true
+  },
+  {
+    "id": 6,
+    "name": "floor_dirt",
+    "variants": [],
+    "passable": true,
+    "castsShadow": false
+  },
+  {
+    "id": 7,
+    "name": "floor_water",
+    "variants": [],
+    "passable": false,
+    "castsShadow": false
+  },
+  {
+    "id": 8,
+    "name": "floor_tiles",
+    "variants": [],
+    "passable": true,
+    "castsShadow": false
   }
 ]

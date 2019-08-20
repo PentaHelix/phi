@@ -2,8 +2,8 @@
   {
     "id": 0,
     "name": "Library",
-    "floor": "",
-    "walls": "",
+    "floor": "floor_planks",
+    "walls": "wall_rocks",
     "structures": [
       {
         "name": "bookcase",

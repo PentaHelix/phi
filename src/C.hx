@@ -58,10 +58,10 @@ class C {
     }
 
     var levelData:Array<Dynamic> = haxe.Json.parse(hxd.Res.load('data/levels.json').entry.getText());
-    for (i in 0...levelData.length) {
-      levelData[i].structures = levelData[i].structures == null ? [] : levelData[i].structures;
+    for (data in levelData) {
+      data.structures = data.structures == null ? [] : data.structures;
 
-      levelData[i].structures = levelData[i].structures.map(s -> {
+      data.structures = data.structures.map(s -> {
         return {
           name: s.name,
           chance: s.chance,
@@ -70,12 +70,21 @@ class C {
           data: s.data
         };
       });
-      levels.set(levelData[i].name, levelData[i]);
+      levels.set(data.name, data);
     }
 
-    var roomTypeData:Array<RoomTypeData> = haxe.Json.parse(hxd.Res.load('data/rooms.json').entry.getText());
-    for (i in 0...roomTypeData.length) {
-      roomTypes.set(roomTypeData[i].name, roomTypeData[i]);
+    var roomTypeData:Array<Dynamic> = haxe.Json.parse(hxd.Res.load('data/rooms.json').entry.getText());
+    for (data in roomTypeData) {
+      data.structures = data.structures.map(s -> {
+        return {
+          name: s.name,
+          data: s.data,
+          amount: s.amount == null ? new DiceSet("1") : new DiceSet(s.amount),
+          type: Type.resolveClass("structureTypes." + s.type),
+          chance: s.chance
+        };
+      });
+      roomTypes.set(data.name, data);
     }
   }
 }
@@ -114,7 +123,7 @@ typedef LevelData = {
   var name: String;
   var generator: String;
   var rooms: Array<LevelRoomData>;
-  var structures: Array<LevelStructureData>;
+  var structures: Array<StructurePlacementData>;
 }
 
 typedef LevelRoomData = {
@@ -122,23 +131,18 @@ typedef LevelRoomData = {
   var chance: Float;
 }
 
-typedef LevelStructureData = {
-  var name: String;
-  var type: Class<StructureType>;
-  var data: Dynamic;
-  var chance: Null<Float>;
-  var amount: DiceSet;
-}
-
 typedef RoomTypeData = {
   var id: Int;
   var name: String;
   var floor: String;
   var walls: String;
-  var structures: Array<RoomStructureData>;
+  var structures: Array<StructurePlacementData>;
 }
 
-typedef RoomStructureData = {
+typedef StructurePlacementData = {
   var name: String;
-  var amount: String;
+  var type: Class<StructureType>;
+  var data: Dynamic;
+  var chance: Null<Float>;
+  var amount: DiceSet;
 }
