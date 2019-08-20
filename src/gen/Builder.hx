@@ -10,11 +10,17 @@ import phi.Universe;
 
 class Builder {
   private static var u: Universe;
+  private static var m: HexMap;
   public static function build (name: String, u: Universe, m: HexMap) {
     var level = C.levels.get(name);
     var generator = getGenerator(level.generator);
     Builder.u = u;
-    generator(u, m);
+    Builder.m = m;
+    generator(m, level);
+  }
+
+  public static function commitTiles () {
+    m.createTiles(u);
   }
 
   public static function structure (p: HexVec, name: String, type: StructureType) {

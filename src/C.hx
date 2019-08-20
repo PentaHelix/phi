@@ -1,5 +1,6 @@
 package;
 
+import structureTypes.StructureType;
 import haxe.ds.StringMap;
 import ds.DiceSet;
 
@@ -56,8 +57,19 @@ class C {
       structures.set(structureData[i].name, structureData[i]);
     }
 
-    var levelData:Array<LevelData> = haxe.Json.parse(hxd.Res.load('data/levels.json').entry.getText());
+    var levelData:Array<Dynamic> = haxe.Json.parse(hxd.Res.load('data/levels.json').entry.getText());
     for (i in 0...levelData.length) {
+      levelData[i].structures = levelData[i].structures == null ? [] : levelData[i].structures;
+
+      levelData[i].structures = levelData[i].structures.map(s -> {
+        return {
+          name: s.name,
+          chance: s.chance,
+          amount: s.amount == null ? null : new DiceSet(s.amount),
+          type: Type.resolveClass("structureTypes." + s.type),
+          data: s.data
+        };
+      });
       levels.set(levelData[i].name, levelData[i]);
     }
 
@@ -112,9 +124,10 @@ typedef LevelRoomData = {
 
 typedef LevelStructureData = {
   var name: String;
+  var type: Class<StructureType>;
   var data: Dynamic;
-  var chance: Float;
-  var amount: String;
+  var chance: Null<Float>;
+  var amount: DiceSet;
 }
 
 typedef RoomTypeData = {

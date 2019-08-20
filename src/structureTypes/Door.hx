@@ -1,6 +1,5 @@
 package structureTypes;
 
-import hl.Profile;
 import rules.HexActorRule.Actor;
 
 class Door extends StructureType {

@@ -12,7 +12,18 @@
     "structures": [
       {
         "name": "ladder_down",
+        "type": "Ladder",
         "data": "Fortress 2"
+      },
+      {
+        "name": "table",
+        "type": "Furniture",
+        "amount": "1d3+3"
+      },
+      {
+        "name": "chair",
+        "type": "Furniture",
+        "amount": "3d4+10"
       }
     ]
   },

@@ -1,8 +1,9 @@
 package gen;
 
+import ds.DiceSet;
+import C.LevelData;
 import structureTypes.Furniture;
-import structureTypes.LadderDown;
-import structureTypes.LadderUp;
+import structureTypes.Ladder;
 import traits.HexStructure;
 import traits.HexActor;
 import traits.HexTransform;
@@ -22,30 +23,10 @@ class Dungeon {
   public static inline var ROOM_MIN_SIZE = 8;
   public static inline var ROOM_MAX_SIZE = 20;
 
-  public static function make (u: Universe, map: HexMap): HexMap {
-    var possibleCorridors = [
-      {r1: 6, r2: 0}, {r1: 6, r2: 1}, 
-      {r1: 6, r2: 2}, {r1: 6, r2: 3},
-      {r1: 6, r2: 4}, {r1: 6, r2: 5},
-      
-      {r1: 0, r2: 1}, {r1: 1, r2: 2}, 
-      {r1: 2, r2: 3}, {r1: 3, r2: 4},
-      {r1: 4, r2: 5}, {r1: 5, r2: 0},
-    ];
-
-    var connected: Array<Int> = [6];
-    var corridors = [];
-
-    while(connected.length != 7) {
-      var corr = possibleCorridors.filter(c -> corridors.indexOf(c) == -1).random();
-      if (connected.indexOf(corr.r1) == -1) connected.push(corr.r1);
-      else if (connected.indexOf(corr.r2) == -1) connected.push(corr.r2); 
-      corridors.push(corr);
-    }
-    
+  public static function make (map: HexMap, data: LevelData): HexMap {
+    var corridors = getCorridors();
     var possibleDoorways: Array<HexVec> = [];
     var rooms: Array<HexVec> = [];
-
     var freeSpace: PriorityQueue<HexVec> = new PriorityQueue<HexVec>();
 
     for (s in HexVec.offsets.concat([HexVec.ZERO])) {
@@ -93,15 +74,24 @@ class Dungeon {
 
     map.set(doorways, "wall_bricks");
 
-    map.createTiles(u);
+    Builder.commitTiles();
 
     for (d in doorways) Builder.structure(d, "door", new Door());
 
-    Builder.structure(freeSpace.dequeue(), "ladder_down", new LadderDown());
-    Builder.structure(freeSpace.dequeue(), "ladder_up", new LadderUp());
+    for (s in data.structures) {
+      if (s.amount != null) {
+        var amount = s.amount.roll();
+        for (_ in 0...amount) {
+          Builder.structure(freeSpace.dequeue(), s.name, Type.createInstance(s.type, [s.data]));
+        }
+      } else {
+        if (s.chance != null && s.chance < Math.random()) continue;
+        Builder.structure(freeSpace.dequeue(), s.name, Type.createInstance(s.type, [s.data]));
+      }
+    }
 
-    for (_ in 0...Random.range(3, 6)) Builder.structure(freeSpace.dequeue(), "table", new Furniture());
-    for (_ in 0...Random.range(12, 21)) Builder.structure(freeSpace.dequeue(), "chair", new Furniture());
+    // for (_ in 0...Random.range(3, 6)) Builder.structure(freeSpace.dequeue(), "table", new Furniture());
+    // for (_ in 0...Random.range(12, 21)) Builder.structure(freeSpace.dequeue(), "chair", new Furniture());
 
     Builder.hero(HexVec.ZERO);
     Builder.actor(HexVec.offsets[0] * 2, "rat", new controllers.Hostile());
@@ -109,7 +99,7 @@ class Dungeon {
     return map;
   }
 
-  public static function room (): Array<HexVec> {
+  private static function room (): Array<HexVec> {
     var hexes = [HexVec.ZERO];
 
     while (hexes.length < ROOM_MIN_SIZE || Math.random() > hexes.length / ROOM_MAX_SIZE) {
@@ -124,7 +114,7 @@ class Dungeon {
     return hexes;
   }
 
-  public static function maze (initialPassages: Array<HexVec>, initialWalls: Array<HexVec>, size: Int) {
+  private static function maze (initialPassages: Array<HexVec>, initialWalls: Array<HexVec>, size: Int) {
     var passages: VecMap<Bool> = new VecMap<Bool>();
     var walls: VecMap<Bool> = new VecMap<Bool>();
     var open: Array<HexVec> = initialPassages.copy();
@@ -171,7 +161,7 @@ class Dungeon {
     return passages;
   }
 
-  public static function corridor (w: Array<HexVec>, maze: VecMap<Bool>, p1: HexVec, p2: HexVec) {
+  private static function corridor (w: Array<HexVec>, maze: VecMap<Bool>, p1: HexVec, p2: HexVec) {
     var explored: VecMap<PathNode> = new VecMap<PathNode>();
     var queue:PriorityQueue<PathNode> = new PriorityQueue<PathNode>();
     var dist = Hex.distance(p1, p2);
@@ -245,6 +235,30 @@ class Dungeon {
     } while ((n = n.prev) != null);
 
     return path;
+  }
+
+  private static function getCorridors () {
+    var possibleCorridors = [
+      {r1: 6, r2: 0}, {r1: 6, r2: 1}, 
+      {r1: 6, r2: 2}, {r1: 6, r2: 3},
+      {r1: 6, r2: 4}, {r1: 6, r2: 5},
+      
+      {r1: 0, r2: 1}, {r1: 1, r2: 2}, 
+      {r1: 2, r2: 3}, {r1: 3, r2: 4},
+      {r1: 4, r2: 5}, {r1: 5, r2: 0},
+    ];
+
+    var connected: Array<Int> = [6];
+    var corridors = [];
+
+    while(connected.length != 7) {
+      var corr = possibleCorridors.filter(c -> corridors.indexOf(c) == -1).random();
+      if (connected.indexOf(corr.r1) == -1) connected.push(corr.r1);
+      else if (connected.indexOf(corr.r2) == -1) connected.push(corr.r2); 
+      corridors.push(corr);
+    }
+
+    return corridors;
   }
 }
 
