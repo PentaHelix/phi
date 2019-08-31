@@ -75,6 +75,7 @@ class C {
 
     var roomTypeData:Array<Dynamic> = haxe.Json.parse(hxd.Res.load('data/rooms.json').entry.getText());
     for (data in roomTypeData) {
+      data.structures = data.structures == null ? [] : data.structures;
       data.structures = data.structures.map(s -> {
         return {
           name: s.name,
@@ -128,7 +129,7 @@ typedef LevelData = {
 
 typedef LevelRoomData = {
   var name: String;
-  var chance: Float;
+  var chance: Null<Float>;
 }
 
 typedef RoomTypeData = {

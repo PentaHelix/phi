@@ -5,6 +5,10 @@ class Utils {
     return arr[Math.floor(Math.random() * arr.length)];
   }
 
+	public static function popRandom<T> (arr:Array<T>): T {
+		return arr.splice(Math.floor(Math.random() * arr.length), 1)[0];
+  }
+
   public static inline function int (from:Int, to:Int): Int {
 		return from + Math.floor(((to - from + 1) * Math.random()));
 	}

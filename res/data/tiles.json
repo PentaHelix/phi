@@ -54,5 +54,12 @@
     "variants": [],
     "passable": true,
     "castsShadow": false
+  },
+  {
+    "id": 8,
+    "name": "wall_teal",
+    "variants": [],
+    "passable": false,
+    "castsShadow": true
   }
 ]

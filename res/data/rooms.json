@@ -1,12 +1,19 @@
 [
   {
     "id": 0,
-    "name": "Library",
+    "name": "fortress_default",
+    "floor": "floor_rocks",
+    "walls": "wall_bricks"
+  },
+  {
+    "id": 1,
+    "name": "library",
     "floor": "floor_planks",
-    "walls": "wall_rocks",
+    "walls": "wall_teal",
     "structures": [
       {
         "name": "bookcase",
+        "type": "Furniture",
         "amount": "1d3+2"
       }
     ]

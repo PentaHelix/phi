@@ -19,37 +19,57 @@ using Hex;
 using Utils;
 using Lambda;
 
-class Dungeon {
+typedef Room = {
+  var name: String;
+  var floor: Array<HexVec>;
+  var walls: Array<HexVec>;
+}
+
+class Fortress {
   public static inline var ROOM_MIN_SIZE = 8;
   public static inline var ROOM_MAX_SIZE = 20;
 
   public static function make (map: HexMap, data: LevelData): HexMap {
     var corridors = getCorridors();
     var possibleDoorways: Array<HexVec> = [];
-    var rooms: Array<HexVec> = [];
     var freeSpace: PriorityQueue<HexVec> = new PriorityQueue<HexVec>();
 
-    for (s in HexVec.offsets.concat([HexVec.ZERO])) {
-      var room = gen.Dungeon.room().map(p -> p + s*13);
-      map.fill(room, "floor_rocks");
-      var outline = room.outline();
-      
-      var i = 0;
-      for (space in room.shuffle()) {
-        freeSpace.enqueue(space, i);
-        i++;
-      }
+    var roomPositions:Array<HexVec> = HexVec.offsets.copy();
+    var rooms: VecMap<Room> = new VecMap<Room>();
 
-      rooms = rooms.concat(room).concat(outline);
-      
-      for (i in 0...6) {
-        var idx: Int = Math.floor(outline.length*i/6);
-        possibleDoorways.push(outline[idx]);
-      }
-      map.set(room.outline(), "wall_bricks");
+    for (r in data.rooms) {
+      if (r.chance != null && Math.random() > r.chance) continue;
+      if (Math.random() > r.chance) continue;
+
+      var pos = roomPositions.popRandom();
+      var room = room(pos*13);
+      room.name = r.name;
+      rooms[pos] = room;
     }
 
-    var maze = gen.Dungeon.maze(possibleDoorways, rooms, 18);
+
+    var obstacles: Array<HexVec> = [];
+    for (s in HexVec.offsets.concat([HexVec.ZERO])) {
+      var room = rooms[s];
+      if (room == null) {
+        rooms[s] = gen.Fortress.room(s*13);
+        room = rooms[s];
+      }
+
+      var type = C.roomTypes.get(room.name);
+      
+      map.fill(room.floor, type.floor);
+      map.set(room.walls, type.walls);
+
+      obstacles = obstacles.concat(room.floor).concat(room.walls);
+      
+      for (i in 0...6) {
+        var idx: Int = Math.floor(room.walls.length*i/6);
+        possibleDoorways.push(room.walls[idx]);
+      }
+    }
+
+    var maze = gen.Fortress.maze(possibleDoorways, obstacles, 18);
     var doorways: Array<HexVec> = [];
 
     for (c in corridors) {
@@ -66,15 +86,34 @@ class Dungeon {
       if (o2 < 0) o2 += 6;
       d1 += o1;
       d2 += o2;
-      var corridor = gen.Dungeon.corridor(rooms, maze, possibleDoorways[d1], possibleDoorways[d2]);
+      var corridor = gen.Fortress.corridor(obstacles, maze, possibleDoorways[d1], possibleDoorways[d2]);
       doorways.push(possibleDoorways[d1]);
       doorways.push(possibleDoorways[d2]);
-      map.set(corridor, "floor_planks");
+      map.set(corridor.slice(1, -1), "floor_planks");
     }
-
-    map.set(doorways, "wall_bricks");
-
+    
     Builder.commitTiles();
+
+    for (r in rooms) {
+      var type = C.roomTypes.get(r.name);
+      
+      for (s in type.structures) {
+        if (s.amount != null) {
+          var amount = s.amount.roll();
+          for (_ in 0...amount) {
+            Builder.structure(r.floor.popRandom(), s.name, Type.createInstance(s.type, [s.data]));
+          }
+        } else {
+          if (s.chance != null && s.chance < Math.random()) continue;
+          Builder.structure(r.floor.popRandom(), s.name, Type.createInstance(s.type, [s.data]));
+        }
+      }
+
+      var i = 0;
+      for (space in r.floor.shuffle()) {
+        freeSpace.enqueue(space, i++);
+      }
+    }
 
     for (d in doorways) Builder.structure(d, "door", new Door());
 
@@ -99,7 +138,7 @@ class Dungeon {
     return map;
   }
 
-  private static function room (): Array<HexVec> {
+  private static function room (pos: HexVec): Room {
     var hexes = [HexVec.ZERO];
 
     while (hexes.length < ROOM_MIN_SIZE || Math.random() > hexes.length / ROOM_MAX_SIZE) {
@@ -111,7 +150,11 @@ class Dungeon {
       hexes = hexes.concat(outline);
     }
 
-    return hexes;
+    return {
+      name: 'fortress_default',
+      floor: hexes.map(p -> p + pos),
+      walls: hexes.outline().map(p -> p + pos)
+    };
   }
 
   private static function maze (initialPassages: Array<HexVec>, initialWalls: Array<HexVec>, size: Int) {

@@ -2,10 +2,10 @@
   {
     "id": 0,
     "name": "Fortress 1",
-    "generator": "dungeon",
+    "generator": "fortress",
     "rooms": [
       {
-        "name": "Library",
+        "name": "library",
         "chance": 1
       }
     ],
@@ -30,10 +30,10 @@
   {
     "id": 1,
     "name": "Fortress 2",
-    "generator": "dungeon",
+    "generator": "fortress",
     "rooms": [
       {
-        "name": "Library",
+        "name": "library",
         "chance": 1
       }
     ]
@@ -41,10 +41,10 @@
   {
     "id": 2,
     "name": "Fortress 3",
-    "generator": "dungeon",
+    "generator": "fortress",
     "rooms": [
       {
-        "name": "Library",
+        "name": "library",
         "chance": 1
       }
     ]

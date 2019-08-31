@@ -47,8 +47,8 @@ class Builder {
 
   private static function getGenerator(name: String) {
     switch (name) {
-      case "dungeon":
-        return Dungeon.make;
+      case "fortress":
+        return Fortress.make;
       default:
         return null;
     }
