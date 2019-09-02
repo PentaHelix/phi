@@ -91,7 +91,7 @@ class Fortress {
       doorways.push(possibleDoorways[d2]);
       map.set(corridor.slice(1, -1), "floor_planks");
     }
-    
+
     Builder.commitTiles();
 
     for (r in rooms) {

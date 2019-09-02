@@ -24,15 +24,7 @@ class Log extends HtmlText{
   private var maxHeight: Int;
   private var baseY: Int;
 
-  public static function get () {
-    if (inst == null) {
-      return inst = new Log();
-    } else {
-      return inst;
-    }
-  }
-
-  private function new () {
+  public function new () {
     super(hxd.Res.font.pixel_font.toFont());
     inst = this;
     font.resizeTo(4);
@@ -51,7 +43,7 @@ class Log extends HtmlText{
     maxWidth =  width * 0.4;
     x = -width*0.15;
 
-    baseY = cast -height/2 + 8;
+    baseY = cast -height/2;
     y = baseY;
     maxHeight = cast height * 0.2;
     resize();
