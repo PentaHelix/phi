@@ -50,6 +50,8 @@ class WalkAction implements Action {
       self.transform.screenPos.x = self.sprite.x;
       self.transform.screenPos.y = self.sprite.y;
     }).ease(Quad.easeOut);
+
+    trace('[${self.actor.name}] x: ${p.x}, y: ${p.y}');
     return true;
   }
 }
