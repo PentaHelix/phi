@@ -149,8 +149,8 @@ class HexMap {
       } else {
         h1 = Hex.round(dx, dy, dz);
       }
-      var solid1 = at(h1).tile == null || at(h1).tile.castsShadow;
-      var solid2 = h2 == null || at(h2).tile == null || at(h2).tile.castsShadow;
+      var solid1 = at(h1).tile == null || !at(h1).tile.transparent;
+      var solid2 = h2 == null || at(h2).tile == null || !at(h2).tile.transparent;
       if (solid1 && solid2) return false;
     }
     return true;

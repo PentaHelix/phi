@@ -1,6 +1,5 @@
 package scenes;
 
-import h2d.Object;
 import h2d.Scene;
 
 class LevelScene extends Scene {

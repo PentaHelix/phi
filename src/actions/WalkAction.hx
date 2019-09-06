@@ -46,12 +46,12 @@ class WalkAction implements Action {
     var p = self.transform.pos.toPixel();
 
     Actuate.tween(self.sprite, 0.2, {x: p.x, y: p.y - 5}).onUpdate(() -> {
+      @:privateAccess self.sprite.posChanged = true;
+
       // TODO: find better alternative for screenPos
       self.transform.screenPos.x = self.sprite.x;
       self.transform.screenPos.y = self.sprite.y;
     }).ease(Quad.easeOut);
-
-    trace('[${self.actor.name}] x: ${p.x}, y: ${p.y}');
     return true;
   }
 }

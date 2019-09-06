@@ -1,5 +1,6 @@
 package;
 
+import hxd.Event;
 import motion.actuators.SimpleActuator;
 import haxe.ds.StringMap;
 import h3d.Engine;

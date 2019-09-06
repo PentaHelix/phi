@@ -5,12 +5,12 @@ import rules.HexActorRule.Actor;
 class Door extends StructureType {
   override public function onPlace () {
     tile.passable = false;
-    tile.castsShadow = true;
+    tile.transparent = false;
   }
   
   override public function onInteract(a: Actor) {
     structure.setState("open");
     tile.passable = true;
-    tile.castsShadow = false;
+    tile.transparent = true;
   }
 }

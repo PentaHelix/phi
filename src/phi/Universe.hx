@@ -10,7 +10,8 @@ class Universe {
 
   public function new (s2d: Scene) {
     this.s2d = s2d;
-    this.root = new Layers(s2d);
+    this.root = new Layers();
+    this.s2d.addChildAt(this.root, 0);
   }
 
   public function addEntity (e: Entity) {

@@ -4,62 +4,62 @@
     "name": "floor_planks",
     "variants": [],
     "passable": true,
-    "castsShadow": false
+    "transparent": true
   },
   {
     "id": 1,
     "name": "floor_rocks",
     "variants": [],
     "passable": true,
-    "castsShadow": false
+    "transparent": true
   },
   {
     "id": 2,
     "name": "wall_bricks",
     "variants": [],
     "passable": false,
-    "castsShadow": true
+    "transparent": false
   },
   {
     "id": 3,
     "name": "floor_marble",
     "variants": [],
     "passable": true,
-    "castsShadow": false
+    "transparent": true
   },
   {
     "id": 5,
     "name": "wall_dirt",
     "variants": [],
     "passable": false,
-    "castsShadow": true
+    "transparent": false
   },
   {
     "id": 6,
     "name": "floor_dirt",
     "variants": [],
     "passable": true,
-    "castsShadow": false
+    "transparent": true
   },
   {
     "id": 7,
     "name": "floor_water",
     "variants": [],
     "passable": false,
-    "castsShadow": false
+    "transparent": true
   },
   {
     "id": 8,
     "name": "floor_tiles",
     "variants": [],
     "passable": true,
-    "castsShadow": false
+    "transparent": true
   },
   {
     "id": 8,
     "name": "wall_teal",
     "variants": [],
     "passable": false,
-    "castsShadow": true
+    "transparent": false
   }
 ]

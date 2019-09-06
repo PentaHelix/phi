@@ -1,7 +1,6 @@
 package ui;
 
 import motion.easing.Bounce;
-import motion.easing.Quad;
 import motion.Actuate;
 import hxd.Key;
 import h2d.Object;

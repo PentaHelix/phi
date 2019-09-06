@@ -1,7 +1,30 @@
 [
   {
     "id": 0,
-    "name": "cape",
-    "equippable": ["BACK"]
+    "name": "potion_of_healing"
+  },
+  {
+    "id": 1,
+    "name": "potion_of_poison"
+  },
+  {
+    "id": 2,
+    "name": "potion_of_water"
+  },
+  {
+    "id": 3,
+    "name": "potion_of_confusion"
+  },
+  {
+    "id": 4,
+    "name": "potion_of_sleeping"
+  },
+  {
+    "id": 5,
+    "name": "potion_of_levitation"
+  },
+  {
+    "id": 6,
+    "name": "potion_of_burning"
   }
 ]
