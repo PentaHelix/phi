@@ -82,7 +82,8 @@ class Fortress {
       var corridor = gen.Fortress.corridor(obstacles, maze, possibleDoorways[d1], possibleDoorways[d2]);
       doorways.push(possibleDoorways[d1]);
       doorways.push(possibleDoorways[d2]);
-      map.set(corridor.slice(1, -1), "floor_planks");
+      map.set(corridor.slice(1, -1), 'floor_planks');
+      map.fill(corridor.slice(1, -1).outline(), 'wall_bricks');
     }
 
     Builder.commitTiles();
