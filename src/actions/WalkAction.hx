@@ -47,7 +47,6 @@ class WalkAction implements Action {
 
     Actuate.tween(self.sprite, 0.2, {x: p.x, y: p.y - 5}).onUpdate(() -> {
       @:privateAccess self.sprite.posChanged = true;
-
       // TODO: find better alternative for screenPos
       self.transform.screenPos.x = self.sprite.x;
       self.transform.screenPos.y = self.sprite.y;

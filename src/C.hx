@@ -103,6 +103,7 @@ typedef ActorData = {
   var name: String;
   var speed: Int;
   var baseAttack: DiceSet;
+  var baseHealth: Int;
   var strength: Int;
   var perception: Int;
 }

@@ -26,12 +26,8 @@ class AttackAction implements Action {
       // TODO
     }
     
-    target.actor.health -= dmg;
+    Manager.inst.actors.damage(target, dmg);
     Log.info('${self.actor.name} hits ${target.actor.name} for ${dmg} damage');
-    
-    if (target.actor.health <= 0) {
-
-    }
 
     return true;
   }

@@ -20,6 +20,7 @@ typedef Actor = {
   @:trait var transform: HexTransform;
   @:trait var actor: HexActor;
   var ?sprite: Bitmap;
+  var ?entity: Entity;
 }
 
 class HexActorRule implements Rule<Actor> {
@@ -83,6 +84,7 @@ class HexActorRule implements Rule<Actor> {
   }
 
   public function onMatched (a: Actor, e: Entity) {
+    a.entity = e;
     Manager.inst.map.at(a.transform.pos).actor = a;
     a.sprite = new Bitmap(actors[a.actor.actorId][0]);
     Game.universe.root.add(a.sprite, 1);
@@ -148,6 +150,14 @@ class HexActorRule implements Rule<Actor> {
         var actor = Manager.inst.map.at(transform.pos + hex).actor;
         if (actor != null && draw) Actuate.tween(actor.sprite, 0.2, {alpha: 1}, true);
       }
+    }
+  }
+
+  public function damage (a: Actor, dmg: Int) {
+    a.actor.health -= dmg;
+    if (a.actor.health <= 0) {
+      Manager.inst.map.at(a.transform.pos).actor = null;
+      a.entity.destroy();
     }
   }
 

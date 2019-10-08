@@ -60,6 +60,9 @@ class Game extends hxd.App {
 
   public static function removeEntity (e: Entity) {
     Game.entities.get(e).universe.removeEntity(e);
+    for (pass in passes) {
+      pass.removeEntity(e);
+    }
     Game.entities.remove(e);
   }
 

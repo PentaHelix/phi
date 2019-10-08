@@ -14,7 +14,7 @@ class HexActor implements Trait {
   public var baseAttack: DiceSet;
 
   public var health: Int;
-  public var maxHealth: Int;
+  public var baseHealth: Int;
 
   public var speed: Int;
   public var strength: Int;
@@ -31,5 +31,6 @@ class HexActor implements Trait {
     this.strength = data.strength;
     this.perception = data.perception;
     this.controller = controller;
+    this.baseHealth = this.health = data.baseHealth;
   }
 }

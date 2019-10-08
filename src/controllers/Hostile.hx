@@ -26,7 +26,6 @@ class Hostile implements Controller {
     if (map.at(path[1]).actor == target) return new AttackAction(self, target);
     if (map.at(path[1]).actor != null) return new WaitAction();
 
-
     return new WalkAction(self, HexVec.direction(path[1]-self.transform.pos));
   }
 }
