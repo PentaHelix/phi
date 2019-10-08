@@ -95,11 +95,15 @@ class Fortress {
         if (s.amount != null) {
           var amount = s.amount.roll();
           for (_ in 0...amount) {
-            Builder.structure(r.floor.popRandom(), s.name, Type.createInstance(s.type, [s.data]));
+            Builder.structure(r.floor.popRandom(), s.name, Type.createInstance(s.type, s.data));
           }
         } else {
           if (s.chance != null && s.chance < Math.random()) continue;
-          Builder.structure(r.floor.popRandom(), s.name, Type.createInstance(s.type, [s.data]));
+          var pos = r.floor.popRandom();
+          Builder.structure(pos, s.name, Type.createInstance(s.type, s.data));
+          if (s.poi != null) {
+            map.poi.set(s.poi, pos);
+          }
         }
       }
 
@@ -115,16 +119,23 @@ class Fortress {
       if (s.amount != null) {
         var amount = s.amount.roll();
         for (_ in 0...amount) {
-          Builder.structure(freeSpace.dequeue(), s.name, Type.createInstance(s.type, [s.data]));
+          var pos = freeSpace.dequeue();
+          Builder.structure(pos, s.name, Type.createInstance(s.type, s.data));
+          if (s.poi != null) {
+            map.poi.set(s.poi, pos);
+          }
         }
       } else {
         if (s.chance != null && s.chance < Math.random()) continue;
-        Builder.structure(freeSpace.dequeue(), s.name, Type.createInstance(s.type, [s.data]));
+        var pos = freeSpace.dequeue();
+        Builder.structure(pos, s.name, Type.createInstance(s.type, s.data));
+        if (s.poi != null) {
+          map.poi.set(s.poi, pos);
+        }
       }
     }
 
-    Builder.hero(HexVec.ZERO);
-    var rat = Builder.actor(HexVec.offsets[0] * 2, "rat", new controllers.Hostile());
+    Builder.actor(HexVec.offsets[0] * 2, "rat", new controllers.Hostile());
 
     return map;
   }

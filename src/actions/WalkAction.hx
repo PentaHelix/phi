@@ -2,9 +2,9 @@ package actions;
 
 import motion.easing.Expo;
 import motion.easing.Quad;
-import rules.HexActorRule;
+// import archetypes;
 import motion.Actuate;
-import rules.HexActorRule.Actor;
+import archetypes.Actor;
 
 class WalkAction implements Action {
   var self: Actor;

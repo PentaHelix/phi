@@ -1,10 +1,10 @@
 package phi;
 
 class Pass {
-  private var rules: Array<Rule<{}>> = [];
+  private var rules: Array<Rule<Dynamic>> = [];
   public function new () {}
 
-  public function add (rule: Rule<{}>) {
+  public function add (rule: Rule<Dynamic>) {
     rules.push(rule);
   }
 

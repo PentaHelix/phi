@@ -1,6 +1,6 @@
 package items;
 
-import rules.HexActorRule.Actor;
+import archetypes.Actor;
 import C.ItemData;
 import haxe.ds.StringMap;
 

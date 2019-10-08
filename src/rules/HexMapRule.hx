@@ -1,5 +1,6 @@
 package rules;
 
+import phi.Archetype;
 import phi.Universe;
 import h2d.Tile;
 import hxd.Res;
@@ -10,9 +11,11 @@ import phi.Entity;
 import traits.HexTransform;
 import traits.HexTile;
 
-typedef Tiles = {
-  @:trait var transform: HexTransform;
-  @:trait var tile: HexTile;
+class Tiles extends Archetype {
+  @:trait 
+  public var transform: HexTransform;
+  @:trait 
+  public var tile: HexTile;
 }
 
 class HexMapRule implements Rule<Tiles> {

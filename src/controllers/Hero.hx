@@ -2,7 +2,7 @@ package controllers;
 
 import actions.Action;
 import actions.InteractAction;
-import rules.HexActorRule.Actor;
+import archetypes.Actor;
 import hxd.Key;
 import actions.WalkAction;
 

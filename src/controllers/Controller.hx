@@ -1,6 +1,6 @@
 package controllers;
 
-import rules.HexActorRule.Actor;
+import archetypes.Actor;
 import actions.Action;
 
 interface Controller {

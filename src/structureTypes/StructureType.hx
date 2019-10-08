@@ -1,7 +1,7 @@
 package structureTypes;
 
 import traits.HexStructure;
-import rules.HexActorRule.Actor;
+import archetypes.Actor;
 import traits.HexTile;
 
 @:keepSub

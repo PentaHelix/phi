@@ -1,7 +1,7 @@
 package actions;
 
 import traits.HexStructure;
-import rules.HexActorRule.Actor;
+import archetypes.Actor;
 
 class InteractAction implements Action {
   var self: Actor;

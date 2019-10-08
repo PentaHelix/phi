@@ -2,7 +2,7 @@ package actions;
 
 import ui.Log;
 import items.Item;
-import rules.HexActorRule.Actor;
+import archetypes.Actor;
 
 class AttackAction implements Action {
   var self: Actor;

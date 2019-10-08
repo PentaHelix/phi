@@ -2,11 +2,11 @@ package phi;
 
 abstract Entity(Int) to Int from Int {
   private static var entity_count = 0;
-  public function new (t: Array<Trait>, u: Universe) {
+  public function new (t: Array<Trait>, ?u: Universe) {
     this = entity_count++;
     Game.registerEntity(this, u);
-    u.addEntity(this);
     addTraits(t);
+    if (u != null) warpTo(u);
   }
 
   public function addTraits (traits: Array<Trait>) {
@@ -14,12 +14,21 @@ abstract Entity(Int) to Int from Int {
       phi.Game.entities.get(this).traits.set(trait.hashCode());
       phi.Game.entities.get(this).data.set(trait.hashCode(), trait);
     }
-
-    Game.match(this);
   }
 
   public function getTrait (id: Int) {
     return Game.entities.get(this).data.get(id);
+  }
+
+  public function warpTo (u: Universe) {
+    var data = Game.entities.get(this);
+    data.universe = u;
+
+    destroy();
+    
+    Game.entities.set(this, data);
+    u.addEntity(this);
+    Game.match(this);
   }
 
   public inline function destroy () {

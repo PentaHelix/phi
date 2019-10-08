@@ -1,5 +1,6 @@
 package rules;
 
+import phi.Archetype;
 import phi.Game;
 import hxd.Res;
 import h2d.Tile;
@@ -9,10 +10,12 @@ import traits.HexStructure;
 import traits.HexTransform;
 import phi.Rule;
 
-typedef Structure = {
-  @:trait var transform: HexTransform;
-  @:trait var structure: HexStructure;
-  var ?bitmap: Bitmap;
+class Structure extends Archetype {
+  @:trait 
+  public var transform: HexTransform;
+  @:trait 
+  public var structure: HexStructure;
+  public var bitmap: Bitmap;
 }
 
 class HexStructureRule implements Rule<Structure> {

@@ -4,7 +4,7 @@ import ds.DiceSet;
 import phi.Trait;
 import controllers.Controller;
 
-class HexActor implements Trait {
+class HexActorData implements Trait {
   public var actorId: Int = 0;
 
   public var name: String;

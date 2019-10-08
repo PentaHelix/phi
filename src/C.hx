@@ -61,32 +61,27 @@ class C {
     for (data in levelData) {
       data.structures = data.structures == null ? [] : data.structures;
 
-      data.structures = data.structures.map(s -> {
-        return {
-          name: s.name,
-          chance: s.chance,
-          amount: s.amount == null ? null : new DiceSet(s.amount),
-          type: Type.resolveClass("structureTypes." + s.type),
-          data: s.data
-        };
-      });
+      data.structures = data.structures.map(mapStructureData);
       levels.set(data.name, data);
     }
 
     var roomTypeData:Array<Dynamic> = haxe.Json.parse(hxd.Res.load('data/rooms.json').entry.getText());
     for (data in roomTypeData) {
       data.structures = data.structures == null ? [] : data.structures;
-      data.structures = data.structures.map(s -> {
-        return {
-          name: s.name,
-          data: s.data,
-          amount: s.amount == null ? new DiceSet("1") : new DiceSet(s.amount),
-          type: Type.resolveClass("structureTypes." + s.type),
-          chance: s.chance
-        };
-      });
+      data.structures = data.structures.map(mapStructureData);
       roomTypes.set(data.name, data);
     }
+  }
+
+  private static function mapStructureData (s: Dynamic) {
+    return {
+      name: s.name,
+      data: s.data == null ? [] : s.data,
+      amount: s.amount == null ? new DiceSet("1") : new DiceSet(s.amount),
+      type: Type.resolveClass("structureTypes." + s.type),
+      chance: s.chance,
+      poi: s.poi
+    };
   }
 }
 
@@ -147,4 +142,5 @@ typedef StructurePlacementData = {
   var data: Dynamic;
   var chance: Null<Float>;
   var amount: DiceSet;
+  var poi: String;
 }

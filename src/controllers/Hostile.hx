@@ -5,7 +5,7 @@ import actions.WalkAction;
 import actions.WaitAction;
 import actions.AttackAction;
 
-import rules.HexActorRule.Actor;
+import archetypes.Actor;
 
 class Hostile implements Controller {
   public var type = 'hostile';

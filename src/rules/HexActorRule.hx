@@ -14,16 +14,10 @@ import phi.Entity;
 import phi.Rule;
 
 import traits.HexTransform;
-import traits.HexActor;
+import traits.HexActorData;
+import archetypes.Actor;
 
-typedef Actor = {
-  @:trait var transform: HexTransform;
-  @:trait var actor: HexActor;
-  var ?sprite: Bitmap;
-  var ?entity: Entity;
-}
-
-class HexActorRule implements Rule<Actor> {
+class HexActorDataRule implements Rule<Actor> {
   public static var actors: Array<Array<Tile>>;
   var current: Int = 0;
   var order: Array<Entity> = new Array<Entity>();
@@ -87,6 +81,12 @@ class HexActorRule implements Rule<Actor> {
     a.entity = e;
     Manager.inst.map.at(a.transform.pos).actor = a;
     a.sprite = new Bitmap(actors[a.actor.actorId][0]);
+    var p = a.transform.pos.toPixel();
+
+    a.sprite.x = p.x;
+    a.sprite.y = p.y - 5;
+    // @:privateAccess a.sprite.posChanged = true;
+
     Game.universe.root.add(a.sprite, 1);
     a.actor.controller.self = a;
     order.push(e);
@@ -96,7 +96,6 @@ class HexActorRule implements Rule<Actor> {
   }
 
   public function onUnmatched (a: Actor, e: Entity) {
-    trace(e);
     order.remove(e);
     a.sprite.remove();
   }

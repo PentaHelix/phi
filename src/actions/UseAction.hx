@@ -1,6 +1,6 @@
 package actions;
 
-import rules.HexActorRule.Actor;
+import archetypes.Actor;
 import items.Item;
 
 class UseAction implements Action {

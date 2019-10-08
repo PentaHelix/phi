@@ -1,7 +1,7 @@
 package gen;
 
 import controllers.Controller;
-import traits.HexActor;
+import traits.HexActorData;
 import traits.HexStructure;
 import traits.HexTransform;
 import phi.Entity;
@@ -33,15 +33,7 @@ class Builder {
   public static function actor (p: HexVec, name: String, controller: Controller): Entity {
     return new Entity([
       new HexTransform(p),
-      new HexActor(name, controller),
-    ], u);
-  }
-
-  public static function hero (p: HexVec): Entity {
-    return new Entity([
-      new HexTransform(p),
-      new HexActor("hero", new controllers.Hero()),
-      new traits.Hero()
+      new HexActorData(name, controller),
     ], u);
   }
 

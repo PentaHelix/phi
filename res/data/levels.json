@@ -11,9 +11,15 @@
     ],
     "structures": [
       {
+        "name": "ladder_up",
+        "type": "Furniture",
+        "poi": "ladder_up"
+      },
+      {
         "name": "ladder_down",
         "type": "Ladder",
-        "data": "Fortress 2"
+        "data": ["Fortress 2", "ladder_up"],
+        "poi": "ladder_down"
       },
       {
         "name": "table",
@@ -35,6 +41,30 @@
       {
         "name": "library",
         "chance": 1
+      }
+    ],
+    "structures": [
+      {
+        "name": "ladder_up",
+        "type": "Ladder",
+        "data": ["Fortress 1", "ladder_down"],
+        "poi": "ladder_up"
+      },
+      {
+        "name": "ladder_down",
+        "type": "Ladder",
+        "data": ["Fortress 3", "ladder_up"],
+        "poi": "ladder_down"
+      },
+      {
+        "name": "table",
+        "type": "Furniture",
+        "amount": "1d3+3"
+      },
+      {
+        "name": "chair",
+        "type": "Furniture",
+        "amount": "3d4+10"
       }
     ]
   },

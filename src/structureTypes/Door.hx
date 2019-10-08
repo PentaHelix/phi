@@ -1,6 +1,6 @@
 package structureTypes;
 
-import rules.HexActorRule.Actor;
+import archetypes.Actor;
 
 class Door extends StructureType {
   override public function onPlace () {

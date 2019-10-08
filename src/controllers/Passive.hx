@@ -1,6 +1,6 @@
 package controllers;
 
-import rules.HexActorRule.Actor;
+import archetypes.Actor;
 
 class Passive implements Controller {
   public var type: String = 'passive';

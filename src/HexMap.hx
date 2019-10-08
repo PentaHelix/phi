@@ -1,7 +1,8 @@
 package;
 
+import haxe.ds.StringMap;
 import h3d.Vector;
-import rules.HexActorRule.Actor;
+import archetypes.Actor;
 import ds.VecMap;
 import ds.PriorityQueue;
 import phi.Universe;
@@ -16,10 +17,12 @@ using Hex;
 class HexMap {
   public var radius: Int;
   public var data: VecMap<MapData>;
+  public var poi: StringMap<HexVec>;
 
   public function new (radius: Int) {
     this.radius = radius;
     this.data = new VecMap<MapData>();
+    this.poi = new StringMap<HexVec>();
   }
 
   public function at(v: HexVec) {
