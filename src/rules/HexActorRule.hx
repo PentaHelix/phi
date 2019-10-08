@@ -126,10 +126,17 @@ class HexActorRule implements Rule<Actor> {
     if (draw) {
       for (hex in Hex.range(20)) {
         if (mapKnowledge.get(order[current])[hex] == true) {
-          Actuate.tween(fogGroup[hex], 0.2, {alpha: 0.5});
+          Actuate.tween(fogGroup[hex], 0.2, {alpha: 0.8});
         } else {
           Actuate.tween(fogGroup[hex], 0.2, {alpha: 1});
         }
+      }
+    }
+
+    if (draw) {
+      for (e in entities) {
+        if (e.actor == actor) continue;
+        Actuate.tween(e.sprite, 0.2, {alpha: 0});
       }
     }
     
@@ -138,8 +145,8 @@ class HexActorRule implements Rule<Actor> {
         mapKnowledge.get(order[current])[transform.pos + hex] = true;
         if (draw) Actuate.tween(fogGroup[transform.pos + hex], 0.2, {alpha: 0}, true);
 
-        var actor = Manager.inst.map.at(hex).actor;
-        if (actor != null && draw) Actuate.tween(actor.sprite, 0.3, {alpha: 1});
+        var actor = Manager.inst.map.at(transform.pos + hex).actor;
+        if (actor != null && draw) Actuate.tween(actor.sprite, 0.2, {alpha: 1}, true);
       }
     }
   }

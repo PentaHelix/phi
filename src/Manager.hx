@@ -1,6 +1,5 @@
 package;
 
-import hxd.Event;
 import motion.actuators.SimpleActuator;
 import haxe.ds.StringMap;
 import h3d.Engine;
@@ -10,7 +9,6 @@ import rules.HexMapRule;
 import rules.HexActorRule;
 
 class Manager extends phi.Game {
-  // singleton
   public static var inst: Manager;
   
   public var map: HexMap;
@@ -38,6 +36,7 @@ class Manager extends phi.Game {
     pass.add(new rules.HeroRule());
 
     warpToLevel("Fortress 1");
+    onResize();
   }
 
   public function warpToLevel (name: String) {
@@ -73,5 +72,10 @@ class Manager extends phi.Game {
   override public function render (e: Engine) {
     s2d.renderer.clear(0x080008);
     super.render(e);
+  }
+
+  override public function onResize () {
+    ui.UI.get().onResize(s2d);
+    phi.Game.universe.onResize();
   }
 }

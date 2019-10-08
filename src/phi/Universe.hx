@@ -21,4 +21,9 @@ class Universe {
   public function removeEntity (e: Entity) {
     entities.remove(e);
   }
+
+  public function onResize () {
+    s2d.x = s2d.width / 2;
+    s2d.y = s2d.height / 2;
+  }
 }

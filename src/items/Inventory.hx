@@ -20,6 +20,10 @@ class Inventory {
     return -1;
   }
 
+  public function get (i: Int) {
+    return items[i];
+  }
+
   public function move (item: Item, to: Int) {
     items[items.indexOf(item)] = null;
     items[to] = item;

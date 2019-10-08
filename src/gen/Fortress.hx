@@ -1,19 +1,12 @@
 package gen;
 
-import ds.DiceSet;
 import C.LevelData;
-import structureTypes.Furniture;
-import structureTypes.Ladder;
-import traits.HexStructure;
-import traits.HexActor;
-import traits.HexTransform;
-import phi.Entity;
-import phi.Universe;
 import HexMap.PathNode;
 import ds.PriorityQueue;
 import ds.VecMap;
 import structureTypes.Door;
-import util.Random;
+import structureTypes.Ladder;
+import structureTypes.Furniture;
 
 using Hex;
 using Utils;
@@ -129,11 +122,8 @@ class Fortress {
       }
     }
 
-    // for (_ in 0...Random.range(3, 6)) Builder.structure(freeSpace.dequeue(), "table", new Furniture());
-    // for (_ in 0...Random.range(12, 21)) Builder.structure(freeSpace.dequeue(), "chair", new Furniture());
-
     Builder.hero(HexVec.ZERO);
-    Builder.actor(HexVec.offsets[0] * 2, "rat", new controllers.Hostile());
+    var rat = Builder.actor(HexVec.offsets[0] * 2, "rat", new controllers.Hostile());
 
     return map;
   }

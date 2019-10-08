@@ -39,6 +39,8 @@ class WalkAction implements Action {
     map.at(self.transform.pos).actor = null;
     self.transform.pos += move;
     map.at(self.transform.pos).actor = self;
+
+    trace('${self.actor.name} walked to ${self.transform.pos}');
     
 
     self.actor.facing = direction;

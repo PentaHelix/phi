@@ -23,28 +23,29 @@ class Builder {
     m.createTiles(u);
   }
 
-  public static function structure (p: HexVec, name: String, type: StructureType) {
-    new Entity([
+  public static function structure (p: HexVec, name: String, type: StructureType): Entity {
+    return new Entity([
       new HexTransform(p),
       new HexStructure(name, type)
     ], u);
   }
 
-  public static function actor (p: HexVec, name: String, controller: Controller) {
-    new Entity([
+  public static function actor (p: HexVec, name: String, controller: Controller): Entity {
+    return new Entity([
       new HexTransform(p),
       new HexActor(name, controller),
     ], u);
   }
 
-  public static function hero (p: HexVec) {
-    new Entity([
+  public static function hero (p: HexVec): Entity {
+    return new Entity([
       new HexTransform(p),
       new HexActor("hero", new controllers.Hero()),
       new traits.Hero()
     ], u);
   }
 
+  // TODO: replace with automatic type instantiation from name
   private static function getGenerator(name: String) {
     switch (name) {
       case "fortress":

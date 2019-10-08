@@ -37,6 +37,7 @@ class InventoryItem extends Bitmap {
 
     inter.onPush = onPush;
     inter.onRelease = onRelease;
+    inter.onOver = onOver;
   }
 
   private function onPush (ev: Event) {
@@ -55,6 +56,8 @@ class InventoryItem extends Bitmap {
       droppedSlot = -1;
       for (i in 0...slots.length) {
         if (slots[i].distance(dragPos) < 4) {
+          var it = inventory.get(i);
+          if (it != null && it != item) continue;
           droppedSlot = i;
           x = slots[i].x;
           y = slots[i].y;
@@ -77,5 +80,9 @@ class InventoryItem extends Bitmap {
     }
 
     inter.stopDrag();
+  }
+  
+  private function onOver (ev: Event) {
+    // ItemInfo.display(this);
   }
 } 

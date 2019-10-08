@@ -1,0 +1,8 @@
+{
+  "item": {
+    "potion_of_healing": {
+      "name": "Potion of Healing",
+      "description": "Restores around 15 health points plus an additional 10 for each level of the user."
+    }
+  }
+}

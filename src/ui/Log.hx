@@ -1,5 +1,6 @@
 package ui;
 
+import h2d.Scene;
 import h2d.RenderContext;
 import h2d.HtmlText;
 
@@ -11,14 +12,14 @@ class Log extends HtmlText{
     messages.push(msg);
     inst.text += '<font color="#fff">${msg}</font>';
     inst.text += "<br/>";
-    inst.resize();
+    inst.scroll();
   }
 
   public static function warn (msg: String) {
     messages.push(msg);
     inst.text += '<font color="#d33">${msg}</font>';
     inst.text += "<br/>";
-    inst.resize();
+    inst.scroll();
   }
 
   private var maxHeight: Int;
@@ -31,21 +32,21 @@ class Log extends HtmlText{
     letterSpacing = 1/4;
   }
 
-  public function resize () {
+  private function scroll () {
     if (textHeight > maxHeight) {
       y = baseY - (textHeight - maxHeight);
     }
   }
 
-  override public function sync (ctx: RenderContext) {
-    var width = ctx.scene.width;
-    var height = ctx.scene.height;
+  public function onResize (s2d: Scene) {
+    var width = s2d.width/UI.uiScale;
+    var height = s2d.height/UI.uiScale;
     maxWidth =  width * 0.4;
     x = -width*0.15;
 
     baseY = cast -height/2;
     y = baseY;
     maxHeight = cast height * 0.2;
-    resize();
+    scroll();
   }
 }

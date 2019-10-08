@@ -4,6 +4,7 @@ import traits.HexStructure;
 import rules.HexActorRule.Actor;
 import traits.HexTile;
 
+@:keepSub
 class StructureType {
   public var structure: HexStructure;
   public var tile: HexTile;
