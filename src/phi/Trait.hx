@@ -38,7 +38,7 @@ class Trait {
 
   public static function getTypeId (name: String, ?ct: ComplexType): Int {
     if(trait_type_map.exists(name)) {
-      trait_type_map.get(name).ct = ct;
+      if (ct != null) trait_type_map.get(name).ct = ct;
       return trait_type_map.get(name).id;
     }
 

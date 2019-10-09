@@ -1,16 +1,15 @@
 package rules;
 
 import phi.Entity;
-import phi.Archetype;
 import phi.Game;
 import phi.Rule;
 import traits.HexTransform;
 
-class Hero extends Archetype {
+typedef Hero = {
   @:trait 
-  public var hero: traits.Hero;
+  var hero: traits.Hero;
   @:trait 
-  public var transform: HexTransform;
+  var transform: HexTransform;
 }
 
 class HeroRule implements Rule<Hero> {

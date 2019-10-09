@@ -1,9 +1,5 @@
 package phi;
 
-import phi.Archetype;
-import haxe.macro.TypeTools;
-import haxe.macro.Type.ClassField;
-import haxe.macro.Type;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 
@@ -11,7 +7,7 @@ using Lambda;
 
 #if !macro
 @:autoBuild(phi.Rule.build())
-interface Rule<T:Archetype> {
+interface Rule<T:{}> {
   public function tick (): Void;
   public function match (e: Entity): Void;
   public function onWarp (u: Universe): Void;
@@ -74,8 +70,8 @@ class Rule {
     if (!hasOnUnmatched) fields.push(onUnmatched(ct));
     if (!hasTick) fields.push(tick());
 
-    fields.push(mask(t));
-    fields.push(matcher(t));
+    fields.push(mask(ct));
+    fields.push(matcher(ct));
     fields.push(remover());
     return fields;
   }
@@ -168,33 +164,35 @@ class Rule {
     };
   }
 
-  private static function matcher (t: Type): Field {
+  private static function matcher (t: haxe.macro.ComplexType): Field {
     var mask: Traits;
     var objFields: Array<ObjectField> = [];
-    var fields: Array<ClassField> = [];
+    var fields: Array<Field> = [];
     switch (t) {
-      case TInst(t, params):
-        fields = t.get().fields.get();
+      case TAnonymous(f):
+        fields = f;
       default: 
     }
 
-    var ct = TypeTools.toComplexType(t);
-    var tpath = switch (ct) {
-      case TPath(p): p;
-      default: null;
-    }
-
-    var block: Array<Expr> = [];
-
     for (field in fields) {
-      if (!field.meta.has(':trait')) continue;
-      var name = field.name;
-      block.push(
-        macro e.$name = cast entity.getTrait($v{
-          getTypeIdOfType(TypeTools.toComplexType(field.type))
-        })
-      );
+      if (!field.meta.exists(t -> t.name == ':trait')) continue;
+      switch (field.kind) {
+        case FVar(fieldType):
+        objFields.push({
+          field: field.name,
+          expr: {
+            expr: ECast(macro entity.getTrait($v{getTypeIdOfType(fieldType)}), null),
+            pos: Context.currentPos()
+          }
+        });
+        default: 
+      }
     }
+ 
+    var objDecl:Expr = {
+      expr: EObjectDecl(objFields),
+      pos: Context.currentPos()
+    };
 
     return {
       name: 'match',
@@ -223,8 +221,7 @@ class Rule {
         expr: macro {
           if (phi.Game.entities.get(entity).traits.match(this.mask)) {
             if (!this.entities.exists(entity)) {
-              var e = new $tpath();
-              $b{block};
+              var e = ${objDecl};
               this.entities.set(entity, e);
               this.onMatched(e, entity);
             }
@@ -239,11 +236,11 @@ class Rule {
     };
   }
 
-  private static function mask (t: Type): Field {
-    var fields: Array<ClassField> = [];
-    switch (t) {
-      case TInst(t, params):
-        fields = t.get().fields.get().filter(field -> field.meta.has(':trait'));
+  private static function mask (ct: ComplexType): Field {
+    var fields: Array<Field> = [];
+    switch (ct) {
+      case TAnonymous(f):
+        fields = f.filter(f -> f.meta.exists(t -> t.name == ':trait'));
       default: 
     }
 
@@ -257,7 +254,7 @@ class Rule {
           pack: ['phi']
         }),
         macro {
-          new phi.Traits($v{fields.map(field -> getTypeIdOfType(TypeTools.toComplexType(field.type)))});
+          new phi.Traits($v{fields.map(field -> getTypeId(field))});
         }
       )
     }

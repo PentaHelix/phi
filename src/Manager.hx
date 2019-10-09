@@ -53,8 +53,8 @@ class Manager extends phi.Game {
       new Hero()
     ]);
 
-    
-    e.get(HexTransform);
+    e.get(traits.HexTransform);
+    e.get(traits.HexActorData);
 
     warpToLevel("Fortress 1", "ladder_up");
     onResize();

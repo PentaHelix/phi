@@ -1,6 +1,7 @@
 package phi;
 
 abstract Entity(Int) to Int from Int {
+  #if !macro
   private static var entity_count = 0;
   public function new (t: Array<Trait>, ?u: Universe) {
     this = entity_count++;
@@ -34,5 +35,22 @@ abstract Entity(Int) to Int from Int {
 
   public inline function destroy () {
     Game.removeEntity(this);
+  }
+
+  #end
+  
+  public macro function get<T> (e: ExprOf<Entity>, c: ExprOf<Class<T>>): ExprOf<T> {
+    var name = switch (c.expr) {
+      case EField(_, name): name;
+      case EConst(CIdent(name)): name; 
+      default: null;
+    }
+
+    var type = Trait.getType(name);
+    
+    return {
+      expr: ECast(macro $e{e}.getTrait($v{Trait.getTypeId(name)}), type),
+      pos: c.pos,
+    };
   }
 }

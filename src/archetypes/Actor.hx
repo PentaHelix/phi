@@ -1,20 +1,21 @@
 package archetypes;
 
-import phi.Archetype;
 import phi.Entity;
 import h2d.Bitmap;
 import traits.HexActorData;
 import traits.HexTransform;
 
-class Actor extends Archetype {
+typedef Actor = {
   @:trait
-  public var transform: HexTransform;
+  var transform: HexTransform;
   @:trait
-  public var actor: HexActorData;
+  var actor: HexActorData;
 
-  public var sprite: Bitmap;
-  public var entity: Entity;
+  var ?sprite: Bitmap;
+  var ?entity: Entity;
+}
 
+class ActorTools {
   public static inline function moveTo (a: Actor, pos: HexVec): Bool {
     var map = Manager.inst.map;
     if (map.at(pos).actor != null) return false;
@@ -34,6 +35,4 @@ class Actor extends Archetype {
     a.transform.screenPos.x = a.sprite.x;
     a.transform.screenPos.y = a.sprite.y;
   }
-
-  // public static function 
 }
