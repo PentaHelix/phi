@@ -1,5 +1,6 @@
 package phi;
 
+import haxe.macro.Expr.ComplexType;
 import haxe.macro.Context;
 import haxe.ds.StringMap;
 
@@ -33,15 +34,20 @@ class Trait {
   }
 
   private static var trait_count: Int = 0;
-  private static var trait_type_map:StringMap<Int> = new StringMap<Int>();
+  private static var trait_type_map:StringMap<{id: Int, ct: ComplexType}> = new StringMap<{id: Int, ct: ComplexType}>();
 
-  public static function getTypeId (name: String): Int {
+  public static function getTypeId (name: String, ?ct: ComplexType): Int {
     if(trait_type_map.exists(name)) {
-      return trait_type_map.get(name);
+      trait_type_map.get(name).ct = ct;
+      return trait_type_map.get(name).id;
     }
 
-    trait_type_map.set(name, trait_count);
+    trait_type_map.set(name, {id: trait_count, ct: ct});
     return trait_count++;
+  }
+
+  public static function getType (name: String): ComplexType {
+    return trait_type_map.get(name).ct;
   }
 }
 #end

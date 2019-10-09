@@ -1,5 +1,6 @@
 package phi;
 
+import phi.Archetype;
 import haxe.macro.TypeTools;
 import haxe.macro.Type.ClassField;
 import haxe.macro.Type;
@@ -10,7 +11,7 @@ using Lambda;
 
 #if !macro
 @:autoBuild(phi.Rule.build())
-interface Rule<T> {
+interface Rule<T:Archetype> {
   public function tick (): Void;
   public function match (e: Entity): Void;
   public function onWarp (u: Universe): Void;
@@ -306,7 +307,7 @@ class Rule {
 
   private static function getTypeIdOfType (ct: ComplexType): Int {
     return switch(ct) {
-      case TPath(p): Trait.getTypeId(p.name);
+      case TPath(p): Trait.getTypeId(p.name, ct);
       default:  null;
     }
   }

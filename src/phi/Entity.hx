@@ -6,6 +6,7 @@ abstract Entity(Int) to Int from Int {
     this = entity_count++;
     Game.registerEntity(this, u);
     addTraits(t);
+    Game.match(this);
     if (u != null) warpTo(u);
   }
 

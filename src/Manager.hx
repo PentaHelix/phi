@@ -1,5 +1,7 @@
 package;
 
+import traits.Hero;
+import archetypes.Actor;
 import rules.HexActorRule;
 import traits.HexActorData;
 import traits.HexTransform;
@@ -11,13 +13,15 @@ import phi.Universe;
 
 import rules.HexMapRule;
 
+using archetypes.Actor;
+using phi.EntityTools;
+
 class Manager extends phi.Game {
   public static var inst: Manager;
 
-  public var hero: Entity;
-  private var heroTransform: HexTransform;
+  public var hero: Actor;
   public var map: HexMap;
-  public var actors: HexActorDataRule;
+  public var actors: HexActorRule;
   public var levels: StringMap<{u: Universe, m: HexMap}> = new StringMap<{u: Universe, m: HexMap}>();
   public var currentLevel: Int;
 
@@ -28,13 +32,6 @@ class Manager extends phi.Game {
   }
   
   override public function init () {
-    heroTransform = new HexTransform(HexVec.ZERO);
-    hero = new Entity([
-      heroTransform,
-      new HexActorData("hero", new controllers.Hero()),
-      new traits.Hero()
-    ]);
-
     var pass = new phi.Pass();
 
     addPass(pass);
@@ -42,44 +39,56 @@ class Manager extends phi.Game {
     pass.add(new HexMapRule());
     pass.add(new rules.HexStructureRule());
     
-    actors = new HexActorDataRule();
+    actors = new HexActorRule();
 
     pass.add(actors);
     pass.add(new rules.HeroRule());
+
+    buildLevel("Fortress 1");
+
+    //hero
+    var e = new Entity([
+      new HexTransform(HexVec.ZERO),
+      new HexActorData('hero', new controllers.Hero()),
+      new Hero()
+    ]);
+
+    
+    e.get(HexTransform);
 
     warpToLevel("Fortress 1", "ladder_up");
     onResize();
   }
 
   public function warpToLevel (name: String, at: String) {
-    var needsInit = false;
-
-    if (levels.get(name) == null) {
-      needsInit = true;
-      var s = new scenes.LevelScene();
-      s.onResize(s2d);
-      levels.set(name, {
-        u: new Universe(s),
-        m: new HexMap(20)
-      });
-    }
+    if (levels.get(name) == null) buildLevel(name);
 
     var m: HexMap = levels.get(name).m;
     var u: Universe = levels.get(name).u;
     
     this.map = m;
     this.warpTo(u);
-    
-    if (needsInit) {
-      gen.Builder.build(name, u, m);
-    }
+  
 
-    this.hero.warpTo(u);
-    this.heroTransform.pos = map.poi.get(at);
+    this.hero.entity.warpTo(u);
+    this.hero.moveTo(map.poi.get(at));
+  }
 
-    if (this.heroTransform.pos == null) {
-      trace('Could not place hero!');
-    }
+  private function buildLevel (name: String) {
+    var s = new scenes.LevelScene();
+    s.onResize(s2d);
+    levels.set(name, {
+      u: new Universe(s),
+      m: new HexMap(20)
+    });
+
+    var m: HexMap = levels.get(name).m;
+    var u: Universe = levels.get(name).u;
+
+    this.map = m;
+    phi.Game.universe = u;
+
+    gen.Builder.build(name, u, m);
   }
 
   override public function tick () {
