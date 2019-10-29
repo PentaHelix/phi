@@ -1,5 +1,6 @@
 package gen;
 
+import traits.HexMap;
 import controllers.Controller;
 import traits.HexActorData;
 import traits.HexStructure;
@@ -9,32 +10,26 @@ import structureTypes.StructureType;
 import phi.Universe;
 
 class Builder {
-  private static var u: Universe;
   private static var m: HexMap;
-  public static function build (name: String, u: Universe, m: HexMap) {
+  public static function build (name: String, m: HexMap) {
     var level = C.levels.get(name);
     var generator = getGenerator(level.generator);
-    Builder.u = u;
     Builder.m = m;
     generator(m, level);
-  }
-
-  public static function commitTiles () {
-    m.createTiles(u);
   }
 
   public static function structure (p: HexVec, name: String, type: StructureType): Entity {
     return new Entity([
       new HexTransform(p),
-      new HexStructure(name, type)
-    ], u);
+      new HexStructure(Builder.m, name, type)
+    ]);
   }
 
   public static function actor (p: HexVec, name: String, controller: Controller): Entity {
     return new Entity([
       new HexTransform(p),
-      new HexActorData(name, controller),
-    ], u);
+      new HexActorData(Builder.m, name, controller),
+    ]);
   }
 
   // TODO: replace with automatic type instantiation from name

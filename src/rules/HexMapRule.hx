@@ -1,5 +1,6 @@
 package rules;
 
+import h2d.Object;
 import phi.Universe;
 import h2d.Tile;
 import hxd.Res;
@@ -10,14 +11,12 @@ import phi.Entity;
 import traits.HexTransform;
 import traits.HexTile;
 
-typedef Tiles = {
+typedef Map = {
   @:trait 
-  var transform: HexTransform;
-  @:trait 
-  var tile: HexTile;
+  var tiles: traits.HexMap;
 }
 
-class HexMapRule implements Rule<Tiles> {
+class HexMapRule implements Rule<Map> {
   var tileGroup: TileGroup;
   var tiles: Array<Tile> = [];
 
@@ -34,21 +33,27 @@ class HexMapRule implements Rule<Tiles> {
 
   public function onWarp (u: Universe) {
     u.root.add(tileGroup, 0);
+    // new Object().
   }
 
-  public function onMatched (t: Tiles, e: Entity) {
-    makeTile(t);
+  public function tick () {
+    trace(entities);
   }
 
-  public function onUnmatched (tile: Tiles, e: Entity) {
-    tileGroup.clear();
-    for (t in entities) {
-      makeTile(t);
-    }
+  public function onMatched (m: Map, e: Entity) {
+    // makeTile(t);
+    trace(m);
   }
 
-  private function makeTile (t:Tiles) {
-    var pos = t.transform.pos.toPixel();
-    tileGroup.add(pos.x, pos.y, tiles[t.tile.tileId]);
-  }
+  // public function onUnmatched (m: Map, e: Entity) {
+  //   tileGroup.clear();
+  //   for (t in entities) {
+  //     makeTile(t);
+  //   }
+  // }
+
+  // private function makeTile (t:Tiles) {
+  //   var pos = t.transform.pos.toPixel();
+  //   tileGroup.add(pos.x, pos.y, tiles[t.tile.tileId]);
+  // }
 }

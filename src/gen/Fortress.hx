@@ -1,7 +1,7 @@
 package gen;
 
 import C.LevelData;
-import HexMap.PathNode;
+import traits.HexMap;
 import ds.PriorityQueue;
 import ds.VecMap;
 import structureTypes.Door;
@@ -85,8 +85,6 @@ class Fortress {
       map.set(corridor.slice(1, -1), 'floor_planks');
       map.fill(corridor.slice(1, -1).outline(), 'wall_bricks');
     }
-
-    Builder.commitTiles();
 
     for (r in rooms) {
       var type = C.roomTypes.get(r.name);

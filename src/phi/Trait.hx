@@ -12,6 +12,7 @@ interface Trait {
 #else
 class Trait {
   public static function build () {
+    Context.registerModuleDependency('phi.Trait', 'force.recompile');
     var id = getTypeId(Context.getLocalClass().get().name);
     var fields = Context.getBuildFields();
     fields.push({
@@ -37,6 +38,7 @@ class Trait {
   private static var trait_type_map:StringMap<{id: Int, ct: ComplexType}> = new StringMap<{id: Int, ct: ComplexType}>();
 
   public static function getTypeId (name: String, ?ct: ComplexType): Int {
+    trace(name);
     if(trait_type_map.exists(name)) {
       if (ct != null) trait_type_map.get(name).ct = ct;
       return trait_type_map.get(name).id;

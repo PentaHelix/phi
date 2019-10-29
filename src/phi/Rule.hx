@@ -21,6 +21,7 @@ interface Rule<T:{}> {
 
 class Rule {
   public static function build () {
+    Context.registerModuleDependency('phi.Rule', 'force.recompile');
     var fields: Array<Field> = Context.getBuildFields();
     var type = Context.getLocalType();
     var t: haxe.macro.Type;

@@ -1,8 +1,6 @@
 package actions;
 
-import motion.easing.Expo;
 import motion.easing.Quad;
-// import archetypes;
 import motion.Actuate;
 import archetypes.Actor;
 
@@ -20,9 +18,9 @@ class WalkAction implements Action {
     var move = HexVec.offsets[direction];
     var map = Manager.inst.map;
     
-    if (map.at(self.transform.pos + move).tile == null) return false;
+    if (map.at(self.transform.pos + move).name == 'empty') return false;
 
-    if (!map.at(self.transform.pos + move).tile.passable) {
+    if (!map.at(self.transform.pos + move).passable) {
       if (map.at(self.transform.pos + move).structure != null) {
         var interaction = new InteractAction(self, map.at(self.transform.pos + move).structure);
         return interaction.perform();

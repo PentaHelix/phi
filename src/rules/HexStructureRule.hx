@@ -13,7 +13,7 @@ typedef Structure = {
   @:trait 
   var transform: HexTransform;
   @:trait 
-  var ?structure: HexStructure;
+  var structure: HexStructure;
   var ?bitmap: Bitmap;
 }
 
@@ -31,8 +31,8 @@ class HexStructureRule implements Rule<Structure> {
   }
 
   public function onMatched (s: Structure, e: Entity) {
-    Manager.inst.map.at(s.transform.pos).structure = s.structure;
-    s.structure.type.tile = Manager.inst.map.at(s.transform.pos).tile;
+    s.structure.map.at(s.transform.pos).structure = s.structure;
+    s.structure.type.tile = s.structure.map.at(s.transform.pos);
     s.structure.type.onPlace();
 
     var pos = s.transform.pos.toPixel();

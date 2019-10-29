@@ -14,7 +14,7 @@ import traits.HexStructure;
 
 using Hex;
 
-class HexMap {
+class OldHexMap {
   public var radius: Int;
   public var data: VecMap<MapData>;
   public var poi: StringMap<HexVec>;

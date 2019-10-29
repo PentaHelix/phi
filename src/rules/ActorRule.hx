@@ -1,5 +1,8 @@
 package rules;
 
+import traits.HexMap;
+import rules.actorRule.Status;
+import rules.actorRule.Positioning;
 import h2d.Object;
 import motion.Actuate;
 import phi.Universe;
@@ -17,8 +20,11 @@ import traits.HexTransform;
 import traits.HexActorData;
 import archetypes.Actor;
 
-class HexActorRule implements Rule<Actor> {
+class ActorRule implements Rule<Actor> {
   public static var actors: Array<Array<Tile>>;
+  public var positioning: Positioning;
+  public var status: Status;
+
   var current: Int = 0;
   var order: Array<Entity> = new Array<Entity>();
 
@@ -41,6 +47,11 @@ class HexActorRule implements Rule<Actor> {
       fogGroup[h].setPosition(h.toPixel().x, h.toPixel().y);
       fogGroup[h].alpha = 0;
     }
+
+    Game.universe.root.add(fog, 10);
+    
+    positioning = new Positioning();
+    status = new Status();
   }
 
   var didFog: Bool = false;
@@ -78,18 +89,12 @@ class HexActorRule implements Rule<Actor> {
   }
 
   public function onMatched (a: Actor, e: Entity) {
-    if (Std.is(a.actor.controller, controllers.Hero)) {
-      Manager.inst.hero = a;
-    }
-    
     a.entity = e;
 
-    Manager.inst.map.at(a.transform.pos).actor = a;
+    a.actor.map.at(a.transform.pos).actor = a;
     a.sprite = new Bitmap(actors[a.actor.actorId][0]);
-    var p = a.transform.pos.toPixel();
 
-    a.sprite.x = p.x;
-    a.sprite.y = p.y - 5;
+    positioning.sync(a);
 
     Game.universe.root.add(a.sprite, 1);
     a.actor.controller.self = a;
@@ -105,9 +110,7 @@ class HexActorRule implements Rule<Actor> {
     a.sprite.remove();
   }
 
-  public function onWarp (u: Universe) {
-    u.root.add(fog, 10);
-  }
+  public function onWarp (u: Universe) {}
 
   public function getNearestNonHostile (pos: HexVec): Actor {
     var nearest: Actor = null;

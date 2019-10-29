@@ -1,5 +1,7 @@
 package;
 
+import hxd.Res;
+import h2d.Tile;
 import structureTypes.StructureType;
 import haxe.ds.StringMap;
 import ds.DiceSet;
@@ -28,12 +30,17 @@ class C {
   public static var ITEM_COUNT:Int;
   public static var STRUCTURE_COUNT:Int;
 
+  public static var tileTex: Array<Tile>;
+
   public static function init () {
     var tileData:Array<TileData> = haxe.Json.parse(hxd.Res.load('data/tiles.json').entry.getText());
     TILE_COUNT = tileData.length;
     for (i in 0...tileData.length) {
       tiles.set(tileData[i].name, tileData[i]);
     }
+
+    // accounting for empty tile
+    TILE_COUNT++;
 
     var actorData:Array<Dynamic> = haxe.Json.parse(hxd.Res.load('data/actors.json').entry.getText());
     ACTOR_COUNT = actorData.length;
@@ -71,6 +78,14 @@ class C {
       data.structures = data.structures.map(mapStructureData);
       roomTypes.set(data.name, data);
     }
+
+    var tileMap = Res.load("tiles.png").toTile();
+
+    tileTex = [
+			 for(x in 0 ... C.TILE_COUNT)
+			 for(y in 0 ... 1)
+			 tileMap.sub(x * 16, y * 16, 16, 16).center()
+		];
   }
 
   private static function mapStructureData (s: Dynamic) {

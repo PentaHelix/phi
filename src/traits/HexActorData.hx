@@ -5,6 +5,7 @@ import phi.Trait;
 import controllers.Controller;
 
 class HexActorData implements Trait {
+  public var map: HexMap;
   public var actorId: Int = 0;
 
   public var name: String;
@@ -22,7 +23,8 @@ class HexActorData implements Trait {
 
   public var controller: Controller;
 
-  public function new (name: String, controller: Controller) {
+  public function new (map: HexMap, name: String, controller: Controller) {
+    this.map = map;
     var data = C.actors.get(name);
     this.name = name;
     this.actorId = data.id;
